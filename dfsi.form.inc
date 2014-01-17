@@ -320,7 +320,6 @@ function dfsi_AddDetailSections(&$form,$contentTypeNames)
         }
     }
 }
-
 // -------------------------------------------
 // recherche d'eixstence pour cet élément
 // d'un détail pour le terme
@@ -398,73 +397,89 @@ function dfsi_AlterEditForm( &$form )
     // recherche des types de contenu de détail definis pour ce noeud
     $contentTypeNames = FindDetailContentTypeNames( $node );
     
-    // creation de la section accordeon detail 
-    dfsi_AddDetailSections($form, $contentTypeNames);
-    
+    // si utilisation de données complémentaires ?
+    if( dfsi_ComplementaryDataEnabled() )
+    {
+        // creation de la section accordeon detail 
+        dfsi_AddDetailSections($form, $contentTypeNames);
+    }    
     // pas en ajout ? modifier
     if( ! dfsi_IsAddForm($form) )
     {    
         dfsi_AlterModifyForm( $form );
-        // Ajout des sous formulaires de detail                   
-        foreach ($contentTypeNames as $key => $contentTypeName)
-        //foreach ($subforms as $k => $subform)
-        {    
-            
-            $detailNode = dfsi_ExistDetailContent(dfsi_GetNidOf($node),$contentTypeName['vid'],$contentTypeName['tid'] );
-            if( $detailNode != null )
-            {                
-                node_object_prepare($detailNode);
-                $subform = dfsi_CreateDetailForm($form,$detailNode,$contentTypeName);  
-                
-                // ajout des champs cachés
-                $subform['detail_nid'] = array('#type' => 'hidden', '#value' => dfsi_GetNidOf($node));
-                $subform['detail_vid'] = array('#type' => 'hidden', '#value' => $contentTypeName['vid']);
-                $subform['detail_tid'] = array('#type' => 'hidden', '#value' => $contentTypeName['tid']);
-                
-                // ajout au formulaire principal
-                $form['DetailDataSection'][$key]['formulaire'] = $subform;
-                
-                unset($form['DetailDataSection'][$key]['formulaire']['actions']['submit']);
-                unset($form['DetailDataSection'][$key]['formulaire']['#submit']);
-                
-                $saveButton= array
-                (
-                    //'#executes_submit_callback' => TRUE,
-                    '#type' => 'submit',
-                    '#value' => t("Enregistrer le détail"),
-                    '#submit' => '',
-                    '#weight' => 254,
-                    '#ajax' => array
-                    (
-                        'callback' => 'dfsi_subform_form_submit',
-                        'wrapper' => $form['DetailDataSection'][$key]['formulaire'],
-                    ),
-                );  
-                $form['DetailDataSection']['Serveur']['formulaire']['actions']['submit'] = $saveButton;
-                //
-                dpm($form['DetailDataSection']['Serveur']['formulaire']);
-            }
-            else
-            {
-                $label = $contentTypeName['label'];
-                $form['DetailDataSection'][$key]['links'] = array
-                (
-                    array
-                    (
-                    '#type' => 'link',
-                    '#title'=> t('Ajouter un détail pour '.$key),
-                    '#href'=> "http://www.google.fr",
-                    '#description' => t("création d'un  élément de détail"),
-                    ),                    
-                ); 
-                
-                 
-            }
-            
-        }       
+        // si utilisation de données complémentaires ?
+        if( dfsi_ComplementaryDataEnabled() )
+        {
+            dfsi_AddSubForms( $form , $contentTypeNames);
+        }
+       
     }  
 }
 
+// -----------------------------
+// // ajout des sous formulaires
+// -----------------------------
+function dfsi_AddSubForms(&$form, $contentTypeNames)
+{    
+    $node =  $form['#node'];
+    // Ajout des sous formulaires de detail                   
+    foreach ($contentTypeNames as $key => $contentTypeName)
+    //foreach ($subforms as $k => $subform)
+    {    
+
+        $detailNode = dfsi_ExistDetailContent(dfsi_GetNidOf($node),$contentTypeName['vid'],$contentTypeName['tid'] );
+        if( $detailNode != null )
+        {                
+            node_object_prepare($detailNode);
+            $subform = dfsi_CreateDetailForm($form,$detailNode,$contentTypeName);  
+
+            // ajout des champs cachés
+            $subform['detail_nid'] = array('#type' => 'hidden', '#value' => dfsi_GetNidOf($node));
+            $subform['detail_vid'] = array('#type' => 'hidden', '#value' => $contentTypeName['vid']);
+            $subform['detail_tid'] = array('#type' => 'hidden', '#value' => $contentTypeName['tid']);
+
+            // ajout au formulaire principal
+            $form['DetailDataSection'][$key]['formulaire'] = $subform;
+
+            unset($form['DetailDataSection'][$key]['formulaire']['actions']['submit']);
+            unset($form['DetailDataSection'][$key]['formulaire']['#submit']);
+
+            $saveButton= array
+            (
+                //'#executes_submit_callback' => TRUE,
+                '#type' => 'submit',
+                '#value' => t("Enregistrer le détail"),
+                '#submit' => '',
+                '#weight' => 254,
+                '#ajax' => array
+                (
+                    'callback' => 'dfsi_subform_form_submit',
+                    'wrapper' => $form['DetailDataSection'][$key]['formulaire'],
+                ),
+            );  
+            $form['DetailDataSection']['Serveur']['formulaire']['actions']['submit'] = $saveButton;
+            //
+            
+        }
+        else
+        {
+            $label = $contentTypeName['label'];
+            $form['DetailDataSection'][$key]['links'] = array
+            (
+                array
+                (
+                '#type' => 'link',
+                '#title'=> t('Ajouter un détail pour '.$key),
+                '#href'=> "http://www.google.fr",
+                '#description' => t("création d'un  élément de détail"),
+                ),                    
+            ); 
+
+
+        }
+
+    }    
+}
 // -----------------------
 // validation champ statut
 // -----------------------
@@ -493,19 +508,22 @@ function dfsi_form_ElementAlter(&$form)
     $language = $form['field_statut']['#language'];
     $form['field_statut'][$language]['0']['#element_validate']   = array('dfsi_field_statut_validate');        
     
-    // ---------------------------------------------------    
-    // ajout d'un regroupement accordéon 
-    // pour données complémentaires
-    // ---------------------------------------------------    
-    $form['DetailDataSection'] = array
-    (
-        '#type' => 'fieldset',
-        '#title' => t('Données complémentaires'),
-        '#description' => t(''),
-        '#collapsible' => TRUE,
-        '#collapsed' => TRUE,
-        '#weight' => '3',
-    );    
+    if( dfsi_ComplementaryDataEnabled() )
+    {
+        // ---------------------------------------------------    
+        // ajout d'un regroupement accordéon 
+        // pour données complémentaires
+        // ---------------------------------------------------    
+        $form['DetailDataSection'] = array
+        (
+            '#type' => 'fieldset',
+            '#title' => t('Données complémentaires'),
+            '#description' => t(''),
+            '#collapsible' => TRUE,
+            '#collapsed' => TRUE,
+            '#weight' => '3',
+        );   
+    }
     // ---------------------------------------------------
     // regroupement accordéon pour gestion des dépendances
     // ---------------------------------------------------    

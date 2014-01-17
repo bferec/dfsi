@@ -21,46 +21,49 @@ function dfsi_menu()
 {
     $items = array();
 
-    $items['taxonomy/term/%taxonomy_term/Chunk'] = array
-    (
-        'title' => "Données complémentaires" ,
-        'type' => MENU_LOCAL_TASK,
-        'page callback' => 'dfsi_ComplementDataTypePage',    
-        'access callback' => TRUE,    
-        'page arguments' => array(2),
-        'file' => 'dfsi.details.inc',
-        'weight' => 100,         
-    );
-    $items['taxonomy/term/%taxonomy_term/Chunk/Add'] = array
-    (   
-        'title' => "Ajouter",
-        'type' => MENU_LOCAL_ACTION,
-        'page callback' => 'dfsi_AddDetailComplementType',   
-        'access callback' => TRUE,    
-        'page arguments' => array(2),
-        'file' => 'dfsi.details.inc',
-        
-    );
-    $items['taxonomy/term/%taxonomy_term/Chunk/Edit'] = array
-    (   
-        'title' => "Modifier",
-        'type' => MENU_LOCAL_ACTION,
-        'page callback' => 'dfsi_EditDetailComplementType',   
-        'access callback' => TRUE,    
-        'page arguments' => array(2),
-        'file' => 'dfsi.details.inc',
-        
-    );
-    $items['taxonomy/term/%taxonomy_term/Chunk/Delete'] = array
-    (   
-        'title' => "Supprimer",
-        'type' => MENU_LOCAL_ACTION,
-        'page callback' => 'dfsi_DeleteDetailComplementType',   
-        'access callback' => TRUE,    
-        'page arguments' => array(2),
-        'file' => 'dfsi.details.inc',
-        
-    );    
+    if( dfsi_ComplementaryDataEnabled() )
+    {
+        $items['taxonomy/term/%taxonomy_term/Chunk'] = array
+        (
+            'title' => "Données complémentaires" ,
+            'type' => MENU_LOCAL_TASK,
+            'page callback' => 'dfsi_ComplementDataTypePage',    
+            'access callback' => TRUE,    
+            'page arguments' => array(2),
+            'file' => 'dfsi.details.inc',
+            'weight' => 100,         
+        );
+        $items['taxonomy/term/%taxonomy_term/Chunk/Add'] = array
+        (   
+            'title' => "Ajouter",
+            'type' => MENU_LOCAL_ACTION,
+            'page callback' => 'dfsi_AddDetailComplementType',   
+            'access callback' => TRUE,    
+            'page arguments' => array(2),
+            'file' => 'dfsi.details.inc',
+
+        );
+        $items['taxonomy/term/%taxonomy_term/Chunk/Edit'] = array
+        (   
+            'title' => "Modifier",
+            'type' => MENU_LOCAL_ACTION,
+            'page callback' => 'dfsi_EditDetailComplementType',   
+            'access callback' => TRUE,    
+            'page arguments' => array(2),
+            'file' => 'dfsi.details.inc',
+
+        );
+        $items['taxonomy/term/%taxonomy_term/Chunk/Delete'] = array
+        (   
+            'title' => "Supprimer",
+            'type' => MENU_LOCAL_ACTION,
+            'page callback' => 'dfsi_DeleteDetailComplementType',   
+            'access callback' => TRUE,    
+            'page arguments' => array(2),
+            'file' => 'dfsi.details.inc',
+
+        );    
+    }
     // ajout d'onglets sur page de visualisation du noeud
     // menu local  task
     $items['node/%node/Dependants'] = array
@@ -253,7 +256,7 @@ function dfsi_menu_local_tasks_alter (&$data, $router_item, $root_path )
     
     if( in_array($root_path, $NodesPath ) )
     {   
-        // un noeud es affiché, ou en courz d'ajout ou de modification
+        // un noeud es affiché, ou en cours d'ajout ou de modification
         $node = $router_item['page_arguments'][0];
          //
         // container ou service ? modifier les menus localtask
@@ -282,7 +285,7 @@ function dfsi_menu_local_tasks_alter (&$data, $router_item, $root_path )
         }
     } 
     // on est dans l'onglet des types de données complémentaires
-     else if($root_path == 'taxonomy/term/%/Chunk')     
+     else if(dfsi_ComplementaryDataEnabled() && $root_path == 'taxonomy/term/%/Chunk')     
     {
         $did = -1;
         $type= '';

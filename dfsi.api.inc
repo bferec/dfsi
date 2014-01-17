@@ -558,3 +558,10 @@ function dfsi_load($nids)
     }
     return $result;
 }
+
+// 1 si utilisation des données complémentaires
+// 0 sinon
+function dfsi_ComplementaryDataEnabled()
+{
+    return variable_get("dfsi_use_chunk",0) == 1;
+}

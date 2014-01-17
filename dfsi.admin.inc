@@ -22,7 +22,7 @@ function dfsi_settings()
         '#title' => t('Jeux de test'),
         '#description' => t('Génération ou suppression de données de test.'),
         '#collapsible' => TRUE,
-        '#collapsed' => FALSE
+        '#collapsed' => TRUE
     );
     
     if( variable_get('dfsi_generate_test_data#Disabled',FALSE) == FALSE )
@@ -66,7 +66,7 @@ function dfsi_settings()
         '#title' => t('Statuts'),
         '#description' => t('Paramètrage des états possible pour une élément.'),
         '#collapsible' => TRUE,
-        '#collapsed' => FALSE
+        '#collapsed' => TRUE
     );
     
     $form['Statuts']['dfsi_ok_icon'] = array
@@ -91,11 +91,29 @@ function dfsi_settings()
         '#default_value' => variable_get('dfsi_error_icon', "red_button.png")
     );
     
+    $form['Données complémentaires'] = array
+    (
+        '#type' => 'fieldset',
+        '#title' => t('Données complémentaires'),
+        '#description' => t('Gestion des données spécifique à type de service'),
+        '#collapsible' => TRUE,
+        '#collapsed' => FALSE
+    );
+    
+    $form['Données complémentaires']['dfsi_use_chunk'] = array
+    (
+        '#type' => 'radios',
+        '#title' => t('Gestion des donnés complémentaires'),
+        '#options' => array
+        (
+            1 => t('Activer'),
+            0 => t('Désactiver'),
+        ),
+        '#default_value' => variable_get("dfsi_use_chunk",0),
+    );    
+    
     $form['#submit'][] = 'dfsi_settings_form_submit';
     
-    // pour v2, multiples etats par groupes
-    //$rows = array();
-    //$stateList = theme('table', array("header" => array(t('Etat'), t('libelle'), t('Image')), "rows" => $rows));  
         
   return system_settings_form($form);
 }
@@ -107,9 +125,18 @@ function dfsi_settings_validate($form, &$form_state)
 {
 }
 
+// -----------------
+// Hook_submit
+// -----------------
 function dfsi_settings_form_submit($form, &$form_state) 
-{
-
+{    
+    variable_set("dfsi_use_chunk",$form['Données complémentaires']['dfsi_use_chunk']['#value']);
+    drupal_flush_all_caches();
+    cache_clear_all();
+    $msg = "Gestion des donnnées complémentaire ";
+    $msg .= dfsi_ComplementaryDataEnabled() ? "activée" : "désactivée";
+    dsm(t($msg) );
+    
     module_load_include( _INCLUDE_EXTENSION , _MODULE_NAME , "dfsi.testData" );
 
     switch( $form_state['values']['dfsi_generate_test_data'] )
@@ -141,5 +168,6 @@ function dfsi_settings_form_submit($form, &$form_state)
         default:                
         break;
     }
+    
 }
 
