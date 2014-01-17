@@ -1,0 +1,31 @@
+name = dfsi
+description = Gestion des dépendances fonctionnelles d'un système d'Information
+core = 7.x
+version = "0.5"
+
+package = dfsi
+
+dependencies[] = references
+dependencies[] = node_reference
+dependencies[] = taxonomy
+
+configure = admin/config/dfsi/settings
+
+files[] = dfsi.admin.inc
+files[] = dfsi.api.inc
+files[] = dfsi.common.fields.inc
+files[] = dfsi.container.fields.inc
+files[] = dfsi.container.inc
+files[] = dfsi.define.inc
+files[] = dfsi.dependances.inc
+files[] = dfsi.details.inc
+files[] = dfsi.form.inc
+files[] = dfsi.itcomputercompany.taxonomy.inc
+files[] = dfsi.itservicetypes.taxonomy.inc
+files[] = dfsi.menu.inc
+files[] = dfsi.permissions.inc
+files[] = dfsi.service.fields.inc
+files[] = dfsi.statut.inc
+files[] = dfsi.testData.inc
+files[] = dfsi.views.inc
+

@@ -1,0 +1,504 @@
+<?php
+
+// ------------------------------------------------
+// @(#) dfsi.install
+// @(#) 11/12/2013
+// ------------------------------------------------
+
+if( !defined("_MODULE_NAME") ) { define( "_MODULE_NAME" , "dfsi" ); }                                               // nom du module
+if( !defined("_INCLUDE_EXTENSION") ) { define( "_INCLUDE_EXTENSION" , "inc" ); }                                    // extension pour les fichiers include php
+
+
+module_load_include( _INCLUDE_EXTENSION , _MODULE_NAME , "dfsi.define");
+
+
+// --------------------------------
+// creation du format de date fr
+// --------------------------------
+function dfsi_CreateDateFormat()
+{
+    // verification existence
+    //SELECT * FROM `date_formats` WHERE format='d/m/Y'
+    	$dfid = db_select("date_formats", "d") 
+                -> fields("d", array("format","type")) 
+                -> condition("d.format", 'd/m/Y') 
+                -> condition("d.type", 'custom') 
+                -> execute() 
+                -> fetchField();
+        if( $dfid == NULL )
+        {
+            $sql="insert into `date_formats` (`format`,`type`,`locked` ) VALUES ('d/m/Y','custom','0');";
+            db_query($sql);   
+        }
+}
+
+// --------------------------------
+// suppression du format de date fr
+// --------------------------------
+function dfsi_DeleteDateFormat()
+{
+
+    $sql="DELETE FROM `date_formats` WHERE `date_formats`.`format`='d/m/Y' AND `date_formats`.`type`='custom';";
+    db_query($sql);   
+}
+
+// --------------------------------------------------
+// creation des variables par defaut pour les statuts
+// --------------------------------------------------
+function dfsi_Create_variables()
+{
+    variable_set('dfsi_generate_test_data#Disabled', FALSE);
+    variable_set('dfsi_ok_icon', "green_button.png");
+    variable_set('dfsi_warning_icon', "orange_button.png");
+    variable_set('dfsi_error_icon', "red_button.png");
+}
+// ---------------------------------------------------------------
+// ---------------------------------------------------------------
+//  hook_install().
+// ---------------------------------------------------------------
+// ---------------------------------------------------------------
+function dfsi_install() 
+{ 
+    
+        dfsi_Create_variables();
+	//
+        dfsi_CreateDateFormat();
+        
+	// ------------------------------
+	// Taxonomy :  itcomputercompany
+	// ------------------------------
+	$taxonomyName = "Constructeurs informatique";
+	$machineName = "itcomputercompany";
+	$description =  "Editeurs et constructeurs informatique à l'origine du service";
+        
+        module_load_include( _INCLUDE_EXTENSION , _MODULE_NAME , "dfsi.itcomputercompany.taxonomy");
+	dfsi_Create_Taxonomy( $taxonomyName , $machineName , $description ,_MODULE_NAME);
+        // -----------------------------------
+	// Taxonomy itcomputercompany : termes
+	// -----------------------------------
+	dfsi_Create_itcomputercompany_Taxonomy_term($machineName);
+	//
+	// ------------------------------
+	// Taxonomy :  itservicetypes
+	// ------------------------------
+	$taxonomyName = "Types de service";
+	$machineName =  "itservicetypes";
+	$description = "Catégories arborescentes de services composants le système d'information";
+        module_load_include( "inc" , _MODULE_NAME , "dfsi.itservicetypes.taxonomy");
+	dfsi_Create_Taxonomy( $taxonomyName , $machineName , $description , _MODULE_NAME );
+     
+        // -----------------------------------
+	// Taxonomy itservicetypes : termes
+	// -----------------------------------
+	dfsi_Create_itservicetypes_Taxonomy_term($machineName);
+	//
+        //       
+	// ------------------------------
+	// content type :  itservice
+	// ------------------------------
+	$humanName = "service";
+	$title = "Service";
+	$description = "Service composant le système d'information, proposé aux utilisateurs ou utilisé par d'autres services";
+        module_load_include( "inc" , _MODULE_NAME , "dfsi.service.fields" );
+	dfsi_Create_ContentType( _SERVICE, $humanName , $title , $description) ;
+	dfsi_Create_itservice_Fields( _SERVICE );
+	dfsi_Create_itservice_Fields_Instances( _SERVICE ); 
+	//
+	// ------------------------------
+	// content type :  itcontainer
+	// ------------------------------
+	$typeName = "itcontainer";
+	$humanName = "container";
+	$title = "container";
+	$description = "Container de services ou de sous containers";
+        module_load_include( _INCLUDE_EXTENSION , _MODULE_NAME , "dfsi.container.fields" );
+	dfsi_Create_ContentType(_CONTAINER, $humanName , $title , $description) ;
+	dfsi_Create_itcontainer_Fields( _CONTAINER );
+	dfsi_Create_itcontainer_Fields_Instances(_CONTAINER );
+	//
+
+	//
+	// -------------------------------------------------
+	// champ communs à plusieurs
+	// types de contenus
+	// ces champs seront partagées 
+	// par les types de contenu itservice et itcontainer
+	// -------------------------------------------------
+        module_load_include( _INCLUDE_EXTENSION , _MODULE_NAME , "dfsi.common.fields" );
+       
+        dfsi_Create_Common_Fields( _SERVICE );
+	//
+        dfsi_Create_Common_Fields_Instances(_SERVICE );
+        dfsi_Create_Common_Fields_Instances(_CONTAINER );
+	
+}
+//
+//
+// ------------------------
+// Creation d'une taxonomie  
+// ------------------------
+function dfsi_Create_Taxonomy( $taxonomyName , $machineName , $description , $module )
+{
+	$vocab = array
+	(
+	    	"name" => $taxonomyName,
+		"machine_name" => $machineName,
+	 	"description" => $description,
+		"module" => "taxonomy",
+	    	"hierarchy" => 0,
+		"module" => $module,
+	);
+	taxonomy_vocabulary_save( (object) $vocab);
+}
+//
+// -----------------------------
+// suppression d'une taxonomie 
+// -----------------------------
+function dfsi_Delete_Taxonomy($taxonomyName)
+{
+	$vid = db_select("taxonomy_vocabulary", "v") 
+                -> fields("v", array("vid")) 
+                -> condition("v.machine_name", $taxonomyName) 
+                -> execute() 
+                -> fetchField();
+        if( $vid != NULL )
+        {
+            taxonomy_vocabulary_delete($vid);
+        }
+}
+
+
+// ---------------------------------------------------------------
+// ---------------------------------------------------------------
+// Implements hook_uninstall().
+// ---------------------------------------------------------------
+// ---------------------------------------------------------------
+function dfsi_uninstall() 
+{     
+    	// ----------------------------------
+	// Suppression des instances 
+	// de champs 
+	// ----------------------------------
+	dfsi_Delete_Fields_Instances(_CONTAINER);
+	// -----------------------------------------------
+	// Suppression du type de contenu itservice
+	// -----------------------------------------------
+  	$typeName = "itcontainer";
+	dfsi_Delete_ContentType($typeName);
+    
+    	// ----------------------------------
+	// Suppression des instances 
+	// de champs 
+	// ----------------------------------
+	dfsi_Delete_Fields_Instances(_SERVICE);
+	// -----------------------------------------------
+	// Suppression du type de contenu itservice
+	// -----------------------------------------------
+  	$typeName = "itservice";
+	dfsi_Delete_ContentType($typeName);
+
+
+	// --------------------------
+	// Suppression des Taxonomies
+	// --------------------------
+	foreach
+	(
+		array
+		( 
+			"itservicetypes" , "itcomputercompany"
+		) as $taxonomyName
+	)
+	{
+		dfsi_Delete_Taxonomy($taxonomyName);
+	}		
+
+        dfsi_DeleteDateFormat();
+	//
+	// ----------------------------------
+	// purger toutes les infos des champs
+	// ----------------------------------
+	field_purge_batch(1000);
+                
+}
+//
+// --------------------------------------------
+// Creation d'un type de contenu
+// --------------------------------------------
+function dfsi_Create_ContentType( $typeName , $humanName , $title , $description ) 
+{ 
+	// ------------------------------
+	// Definition du type de noeud
+	// ------------------------------
+	$NewType = array
+	(
+		"type" => $typeName,
+		"name" => $humanName,
+		"base" => "node_content",
+		"title_label" => $title,
+		"description" => $description,
+		"custom" => TRUE,
+	);
+	//
+	//
+	// ---------------------------------------------------------------
+	// affecter les autres parametres du noeud non décrit precedemment
+	// ---------------------------------------------------------------
+	$ContentType = node_type_set_defaults($NewType);
+	//
+	//
+	// ---------------------
+	// Ajouter le champ body
+	// ---------------------
+	node_add_body_field( $ContentType, 'Description' );
+	//
+	//
+	// ------------------------------
+	// Sauvegarder le type de contenu
+	// ------------------------------
+	node_type_save($ContentType);
+	//
+	// ------------------------------------------------------------
+	// Ajouter les variables persistentes controlant les parametres
+	// ------------------------------------------------------------
+	variable_set('additional_settings__active_tab_' . $typeName, 'edit-menu');
+	variable_set('node_preview_' . $typeName, 0); // 0 = desactive, 1 = optionel, 2 = requis
+	variable_set('node_options_' . $typeName, array(0 => 'status')); // array(0 => 'status', 1 => 'promote', 2 => 'sticky', 3 => 'revision') 
+	variable_set('node_submitted_' . $typeName, 0); // 1 = afficher auteur et date, 0 = rien
+	variable_set('menu_options_' . $typeName, array());
+ 	variable_set('menu_parent_' . $typeName, 'main-menu:0');
+	//
+	//
+}
+//
+//
+// --------------------------------------------
+// Suppression d'un type de contenu
+// --------------------------------------------
+function dfsi_Delete_ContentType( $typeName )
+{ 
+	// -------------------------------------------------
+	// Collecter tous les nodes de type itservices créés 
+	// -------------------------------------------------
+	$sql = 'SELECT nid FROM {node} n WHERE n.type = :type';
+	$result = db_query($sql, array(':type' => $typeName));
+	$nids = array();
+	foreach ($result as $row) 
+	{
+		$nids[] = $row->nid;
+	}
+	//
+	//
+	// -------------------------------------
+	// Supprimer tous les noeuds en une fois
+	// -------------------------------------
+	node_delete_multiple($nids);
+	//
+	//
+	// --------------------------------------------------------------
+	// Supprimer les variables persistentes controlant les parametres
+	// --------------------------------------------------------------
+	variable_del('additional_settings__active_tab_' . $typeName);
+	variable_del('node_preview_' . $typeName);
+	variable_del('node_options_' . $typeName);
+	variable_del('node_submitted_' . $typeName);
+	variable_del('menu_options_' . $typeName);
+	variable_del('menu_parent_' . $typeName);
+	//
+	// ----------------------------
+	// Supprimer le type de contenu
+	// ----------------------------
+	node_type_delete($typeName);
+}
+// -----------------------------------------
+// suppression instance de champs 
+// -----------------------------------------
+function dfsi_Delete_Fields_Instances($typeName)
+{
+	// ---------------------------------------------------------
+	// Retrouver toutes les instances de champs et les supprimer
+	// ---------------------------------------------------------
+	$instances = field_info_instances('node', $typeName);
+	foreach 
+	(
+		$instances as $instance_name => $instance
+	) 
+	{
+		field_delete_instance($instance);
+	}
+}
+
+
+// -----------------------------------------------
+// Hook_schema 
+// creation des tables specifiques à l'application
+// -----------------------------------------------
+function dfsi_schema() 
+{
+            // table des association servie/container <-> detail <-> vid
+        $schema[_DFSI_NODE_DETAIL_TABLE] = array
+	(
+            'description' => "contient les association entre un noeud dfsi (service ou container), un noeud detail et un terme de vocabulaire",
+            'fields' => array
+		(
+		 	'ndrshpid'  => array
+			(
+			        'type' => 'serial',
+			        'not null' => TRUE,
+			        'description' => 'Primary Key: Unique association ID.',
+		        ),
+                        'nid' => array
+                        (
+			        'type' => 'int',
+			        'not null' => TRUE,
+			        'description' => 'dfsi node Id',                            
+                        ),
+                        'did' => array
+                        (
+			        'type' => 'int',
+			        'not null' => TRUE,
+			        'description' => 'foreign key du detail-> table _DFSI_DETAIL_TABLE',                            
+                        ), 
+                        'vid' => array
+                        (
+			        'type' => 'int',
+			        'not null' => TRUE,
+			        'description' => 'Id vocabulary for this detail',                            
+                        ),                 
+                        'tid' => array
+                        (
+			        'type' => 'int',
+			        'not null' => TRUE,
+			        'description' => 'Id of term for this detail',                            
+                        ),                                 
+                ),
+		'primary key' => array('ndrshpid'),
+		'indexes' => array
+		(
+      			'nid'    => array('nid'),
+			'did' => array('did'),
+                        'ndid' => array('ndid'),
+                        'nid_did_vid_tid'=> array('nid','did','vid', 'tid'),
+		),            
+        );
+        // table de types de contenu de detail pour un terme de taxonomy
+        $schema[_DFSI_DETAIL_TABLE] = array
+	(
+            'description' => "contient les association en terme de taxonomie et type de contenu détail pour ce terme",
+            'fields' => array
+		(
+		 	'did'  => array
+			(
+			        'type' => 'serial',
+			        'not null' => TRUE,
+			        'description' => 'Primary Key: Unique détail ID.',
+		        ),
+                        'vid' => array
+                        (
+			        'type' => 'int',
+			        'not null' => TRUE,
+			        'description' => 'Vocabulary Id',                            
+                        ),
+                        'tid' => array
+                        (
+			        'type' => 'int',
+			        'not null' => TRUE,
+			        'description' => 'term Id',                            
+                        ), 
+                        
+                        'type' => array
+                        (
+			        'type' => 'varchar',
+                                'length' => 32,
+			        'not null' => TRUE,
+			        'description' => 'Machine type name',                            
+                        ),                 
+                ),
+		'primary key' => array('did'),
+		'indexes' => array
+		(
+      			'vid'    => array('vid'),
+			'tid' => array('tid'),
+                        'type' => array('type'),
+                        'vid_tid_type'=> array('vid','tid','type'),
+		),            
+        );
+        // table des etats possibles d'un element
+	$schema[_DFSI_STATE_TABLE] = array
+	(
+	    'description' => "contient les differents etats possibles d'un element vis à vis d'un groupe de dependances",
+	    	'fields' => array
+		(
+		 	'pid'  => array
+			(
+			        'type' => 'serial',
+			        'not null' => TRUE,
+			        'description' => 'Primary Key: Unique state ID.',
+		        ),
+			'uid' => array
+			(
+			        'type' => 'int',
+			        'not null' => TRUE,
+			        'default' => 0,
+			        'description' => "Creator user's {users}.uid",
+			),
+			'libelle' => array
+			(
+        			'type' => 'varchar',
+				'length' => 255,
+				'not null' => TRUE,
+				'default' => '',
+				'description' => "libelle de l'état",
+			),
+			'picture' => array
+			(
+        			'type' => 'varchar',
+				'length' => 255,
+				'not null' => TRUE,
+				'default' => 'dfsi_default_statut.png',
+				'description' => "image associée à l'état",
+			),
+
+		),
+		'primary key' => array('pid'),
+		'indexes' => array
+		(
+      			'libelle'    => array('libelle'),
+			'picture' => array('picture'),
+		),
+	);
+        // table de jointure groupe de dependances statuts
+	$schema[_DFSI_STATE_GROUP_TABLE] = array
+	(
+	    'description' => "Joiture groupe de dépendances <=> statuts",
+	    	'fields' => array
+		(
+		 	'pid'  => array
+			(
+			        'type' => 'serial',
+			        'not null' => TRUE,
+			        'description' => 'Primary Key: Unique state_group ID.',
+		        ),
+		 	'nid'  => array
+			(
+			        'type' => 'int',
+			        'not null' => TRUE,
+			        'description' => 'Node Id that contain dependance group',
+		        ),                  
+			'sid' => array
+			(
+			        'type' => 'int',
+			        'not null' => TRUE,
+			        'description' => "id of state",
+			),                    
+
+		),
+		'primary key' => array('pid'),
+		'indexes' => array
+		(
+      			'nid'    => array('nid'),
+			'sid' => array('sid'),
+                        'nidsid' => array('nid', 'sid'),
+		),
+	);
+	return $schema;
+}

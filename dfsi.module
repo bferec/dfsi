@@ -1,0 +1,392 @@
+<?php
+
+// ------------------------------------------------
+// @(#) dfsi.module
+// @(#) 11/12/2013
+// ------------------------------------------------
+
+if( !defined("_MODULE_NAME") ) { define( "_MODULE_NAME" , "dfsi" ); }                 // nom du module
+if( !defined("_INCLUDE_EXTENSION") ) { define( "_INCLUDE_EXTENSION" , "inc" ); }      // extension pour les fichiers include php
+
+module_load_include( _INCLUDE_EXTENSION , _MODULE_NAME , "dfsi.define");
+module_load_include( _INCLUDE_EXTENSION , _MODULE_NAME , "dfsi.api");
+module_load_include( _INCLUDE_EXTENSION , _MODULE_NAME , "dfsi.dependances");
+module_load_include( _INCLUDE_EXTENSION , _MODULE_NAME , "dfsi.container");
+module_load_include( _INCLUDE_EXTENSION , _MODULE_NAME , "dfsi.form");
+module_load_include( _INCLUDE_EXTENSION , _MODULE_NAME , "dfsi.views");
+module_load_include( _INCLUDE_EXTENSION , _MODULE_NAME , "dfsi.statut");
+module_load_include( _INCLUDE_EXTENSION , _MODULE_NAME , "dfsi.permissions");
+module_load_include( _INCLUDE_EXTENSION , _MODULE_NAME , "dfsi.menu");
+module_load_include( _INCLUDE_EXTENSION , _MODULE_NAME , "dfsi.details");
+
+// ----------------------------
+// validation titre unique
+// pour service ou caontainer
+// ----------------------------
+function dfsi_validate_title( $node , $form , $form_state  )
+{
+    $nid =  dfsi_FindElementBy( _DFSI_TITLE , dfsi_GetTitleOf($node) ) ;
+    if( $nid != dfsi_GetNidOf($node) )
+    {
+        variable_set( _DFSI_ERROR_MSG , t("Nom de service ou container existant...")  );
+        form_set_error('title', variable_get( _DFSI_ERROR_MSG , "Ok" ) );
+    }        
+}
+// ----------------------------
+// Hook_node_validate
+// ----------------------------
+function dfsi_node_validate( $node , $form , $form_state  ) 
+{
+    // Si le noeud est un service ou un container
+    if ( dfsi_GetTypeOf( $node ) == _SERVICE || dfsi_GetTypeOf( $node ) == _CONTAINER ) 
+    {
+        
+        dfsi_validate_title($node , $form , $form_state  );
+        // validation des dependances fonctionnelles
+        dfsi_validate_dependances($node , $form , $form_state  );
+
+    }     
+    // Si le noeud est un container
+    if (  dfsi_GetTypeOf( $node ) == _CONTAINER ) 
+    {
+        // validation des contenus
+        dfsi_validate_Container($node , $form , $form_state  );
+    }
+}
+
+// ------------------------------------------
+// Hook_node_presave
+// ------------------------------------------
+// tout element modifié necessite une
+// // remise à jour du statut 
+// ------------------------------------------
+function dfsi_node_presave( $node ) 
+{
+    // Si le noeud est un service ou un container
+    if ( ( dfsi_GetTypeOf( $node )  == _SERVICE || dfsi_GetTypeOf( $node ) == _CONTAINER ) && variable_get('dfsi_sem_Update', false) != true  )
+    {
+        
+        variable_set('dfsi_sem_Update', true);
+        
+        // mise à jour du champ ancestor des elements directement dependants 
+        dfsi_UpdateElementsHavingAncestor($node);
+        // mise à jour de l'arborescence des noeuds dependants
+        dfsi_UpdateStatut($node);
+
+        // $node->status = 1 (published)
+        node_publish_action($node);        
+        variable_set('dfsi_sem_Update', false);
+    }    
+}
+
+// ------------------------------------------
+// Hook_node_submit
+// ------------------------------------------
+// le contenu devient ipso facto dependant
+// du container
+// ------------------------------------------
+function dfsi_node_submit( $node ) 
+{ 
+    //dpm($node);
+    // Si le noeud est un container
+    // tout element contenu devient dependant de
+    // son container    
+    if ( dfsi_GetTypeOf( $node ) == _CONTAINER )         
+    {   
+        // pour tous les id de contenu
+        $contentNodesIds = dfsi_GetContentOf( $node );        
+        foreach($contentNodesIds as $nid )        
+        {
+            // ajouté si inexistant
+            dfsi_AddDependancies( $nid,  $node );
+        }      
+    }       
+}
+
+// ------------------------------------
+// Hook_entity_info_alter
+// ------------------------------------
+// definit un nouveau mode s'affichage
+// ------------------------------------
+function dfsi_entity_info_alter( &$entity_info ) 
+{
+    $entity_info['node']['view modes']['dfsi_node_list'] = array
+    (
+        'label' => t('Statut graphique'),
+        'custom settings' => true,
+    );
+}
+
+// ------------------------------------
+// Hook_field_formatter_info
+// ------------------------------------
+// creation d'un formatter de champ
+// pour les champs de type liste de texte
+// ---------------------------------------
+function dfsi_field_formatter_info() 
+{
+    return array
+    (
+        'statut_formatter' => array
+        (
+            'label' => t("Statut graphique"),  
+            'field types' => array( 'list_text' ), 
+            'settings'  => array
+            (
+                'dfsi_Mode_Affichage_Statut' => "both",
+                'dfsi_ok_icon' => variable_get('dfsi_ok_icon', "green_button.png"),
+                'dfsi_warning_icon' => variable_get('dfsi_warning_icon', "orange_button.png"),
+                'dfsi_warning_icon' => variable_get('dfsi_error_icon', "red_button.png")
+            ),
+        ),
+    );
+}
+
+// ------------------------------------
+// Hook_field_formatter_settings_form
+// ------------------------------------
+// formulaire de choix du mode d'affichage
+// ---------------------------------------
+function dfsi_field_formatter_settings_form($field, $instance, $view_mode, $form, &$form_state) 
+{
+    // affichage courant
+    $display = $instance['display'][$view_mode];
+  
+    // recuperer les parametres actuels
+    $settings = $display['settings'];
+  
+    $element = array();
+  
+    $element['dfsi_ok_icon'] = array
+    (
+        '#type'           => 'textfield',                           
+        '#title'          => t('Ok'),                   
+        '#description'    => t("Nom de l'image pour indiquer un statut OK"), 
+        '#default_value'  => variable_get( 'dfsi_ok_icon', "green_button.png"),
+    );
+    $element['dfsi_warning_icon'] = array
+    (
+        '#type'           => 'textfield',                           
+        '#title'          => t('Warning'),                   
+        '#description'    => t("Nom de l'image pour indiquer un statut a risque"), 
+        '#default_value'  => variable_get( 'dfsi_warning_icon', "orange_button.png"),
+    );    
+        $element['dfsi_error_icon'] = array
+    (
+        '#type'           => 'textfield',                           
+        '#title'          => t('Error'),                   
+        '#description'    => t("Nom de l'image pour indiquer un statut inactif"), 
+        '#default_value'  => variable_get('dfsi_error_icon', "red_button.png"),
+    );
+    $element['dfsi_Mode_Affichage_Statut'] = array
+    (
+        '#type'           => 'select',       
+        '#title'          => t('Afficher'),  
+        '#description'    => t("Choix du mode d'affichage"), 
+        '#default_value'  => $settings['dfsi_Mode_Affichage_Statut'],   
+        '#options'        => array
+        (
+            'text_only' => t('Texte seulement'),
+            'icon_only' => t('Icône seulement'),
+            'both' => t('Texte et icône'),
+        ),
+    );
+  return $element;
+}
+
+// ------------------------------------
+// Hook_field_formatter_settings_summary
+// ------------------------------------
+// resumé pour le parametrage d'affichage du statut
+// ------------------------------------------------
+function dfsi_field_formatter_settings_summary($field, $instance, $view_mode) 
+{
+    $display = $instance['display'][$view_mode];
+    $settings = $display['settings'];
+    $summary = t
+    (
+        "Modifier la manière dont le statut est affiché", array
+        (
+            '@dfsi_Mode_Affichage_Statut'  => $settings['dfsi_Mode_Affichage_Statut'],
+            '@dfsi_ok_icon'  => variable_get('dfsi_ok_icon', "green_button.png"),
+            '@dfsi_warning_icon'  => variable_get('dfsi_warning_icon', "orange_button.png"),
+            '@dfsi_error_icon'  => variable_get('dfsi_error_icon', "red_button.png"),
+        )
+    ); 
+  return $summary;
+}
+
+// ------------------------------------
+// Hook_field_formatter_view
+// ------------------------------------
+// mise en forme du champ statut
+// affichage graphique texte ou les 2
+// et choix de l'icone en fonction du statut
+// -----------------------------------------
+function dfsi_field_formatter_view($entity_type, $entity, $field, $instance, $langcode, $items, $display) 
+{
+    $element = array(); // Initialize the var
+    
+    $settings = $display['settings'];
+
+    
+    foreach ($items as $delta => $item) 
+    {
+        $statut = $item['value']; // Getting the actual value
+    }
+        
+    
+    $img = dfsi_GetImgOfStatut($statut);
+
+    $options = array
+    (
+        'html' => TRUE,
+        'attributes'  => array
+        (
+            'title' => t('statut element'),
+        ),
+    );
+    switch( $settings['dfsi_Mode_Affichage_Statut'])
+    {
+        case 'text_only':
+            $element[0]['#markup'] =  $statut;
+           
+        break;
+    
+        case 'icon_only':
+            $element[0]['#markup'] =  $img;           
+        break;
+    
+        case 'both':
+            $element[0]['#markup'] = $statut.$img;
+        break;
+    }
+    
+    return $element;
+}
+
+// ----------------
+// Hook_node_access
+// ----------------
+// permission check
+// ----------------
+function dfsi_node_access($node, $op, $account) 
+{
+  
+  $r = menu_local_tasks(0);
+  
+  $type = is_string( $node) ? $node : dfsi_GetTypeOf($node);
+    if (! is_object( $node ) )            
+    {
+        return NODE_ACCESS_IGNORE;
+    }
+    
+    if( $type == _SERVICE )
+    {
+        switch ($op)  
+        {
+            case 'create':
+                if( user_access('create service dfsi', $account))  
+                {
+                    return NODE_ACCESS_ALLOW;
+                }
+            break;
+            case 'update':
+                if (user_access('update service dfsi', $account))  
+                {
+                    return NODE_ACCESS_ALLOW;
+                }
+            break;
+            case 'delete':
+                if (user_access('delete service dfsi', $account))  
+                {
+                    return NODE_ACCESS_ALLOW;
+                }
+            break;
+            case 'view':
+                if (user_access('view service dfsi', $account))  
+                {
+                    return NODE_ACCESS_ALLOW;
+                }
+            break;
+        }
+    }
+    if( $type == _CONTAINER )
+    {
+        switch ($op)  
+        {
+            case 'create':
+                if( user_access('create container dfsi', $account))  
+                {
+                    return NODE_ACCESS_ALLOW;
+                }
+              break;
+            case 'update':
+                if (user_access('update container dfsi', $account))  
+                {
+                    return NODE_ACCESS_ALLOW;
+                }
+              break;
+            case 'delete':
+                if (user_access('delete container dfsi', $account))  
+                {
+                    return NODE_ACCESS_ALLOW;
+                }
+              break;
+            case 'view':
+                if (user_access('view container dfsi', $account))  
+                {
+                    return NODE_ACCESS_ALLOW;
+                }
+              break;
+        }
+    }    
+    // autres cas : interdit
+    return NODE_ACCESS_DENY;
+
+    
+                }
+// ---------------
+// hook_node_view
+// ---------------
+function dfsi_node_view($node, $view_mode) 
+{
+    if(  dfsi_GetTypeOf($node) == _CONTAINER || dfsi_GetTypeOf($node) == _SERVICE)
+    {
+        // affichage identifiant (node id)
+        $node->content['nid'] =
+        array
+        (
+            '#markup' => '<b>Identifiant:</b> '.dfsi_GetNidOf($node),
+            '#weight' => -100, 
+        );
+        //masquage du champ ancestor , dependances et groupe de dependances   et noeuds contenus
+        // car affichés dans tabs local task
+        //$node->content['field_ancestor']['#access'] = FALSE;
+        //$node->content['field_dependances']['#access'] = FALSE;
+        //$node->content['field_groupe_de_dependances']['#access'] = FALSE;
+        //$node->content['field_contenu']['#access'] = FALSE;        
+        hide($node->content['field_ancestor']);
+        hide($node->content['field_dependances']);
+        hide($node->content['field_groupe_de_dependances']);
+        if(dfsi_GetTypeOf($node) == _CONTAINER )
+        {
+            hide($node->content['field_contenu']);
+        }
+        
+        // possibilité d'afficher des données complémentaires 
+        // pour le type de service en question ?        
+        if( dfsi_IsComplementaryDataEnabled( $node ) )
+        {
+            if ($view_mode == 'full')
+            {
+                // test données complémentaires
+                $node->content['custom_field'] = array
+                (
+                    '#markup' => '<br/><br/>Données potentielles complémentaires (en construction)',
+                    '#weight' => 255, 
+                );                            
+            }
+        }
+    }
+}
