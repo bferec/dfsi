@@ -131,15 +131,16 @@ function FindDetailContentTypeNames( $node )
    return $result;
 }
 
-
+// ------------------------------------------------
+//  submit sous formulaire
+// ------------------------------------------------
 function dfsi_subform_form_submit($form, &$form_state) 
 {
-        dpm("oui !");
+        dpm("dfsi_subform_form_submit");
 }
 // -------------------------------------------
 // mise en place du formulaire d'ajout de detail
 // -------------------------------------------
-
 function dfsi_CreateDetailForm($form,$node,$contentTypeName)   
 {
     $formName = $contentTypeName['ctname'].'_node_form';
@@ -424,9 +425,7 @@ function dfsi_AddSubForms(&$form, $contentTypeNames)
     $node =  $form['#node'];
     // Ajout des sous formulaires de detail                   
     foreach ($contentTypeNames as $key => $contentTypeName)
-    //foreach ($subforms as $k => $subform)
     {    
-
         $detailNode = dfsi_ExistDetailContent(dfsi_GetNidOf($node),$contentTypeName['vid'],$contentTypeName['tid'] );
         if( $detailNode != null )
         {                
@@ -474,10 +473,7 @@ function dfsi_AddSubForms(&$form, $contentTypeNames)
                 '#description' => t("création d'un  élément de détail"),
                 ),                    
             ); 
-
-
         }
-
     }    
 }
 // -----------------------
