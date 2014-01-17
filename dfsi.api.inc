@@ -2,8 +2,9 @@
 
 // ------------------------------------------------
 // @(#) dfsi.api.inc
-// entries point for DFSI
-// @(#) 11/12/2013
+// @(#) entries point for DFSI
+// @(#) (c) bruno Ferec
+// @(#) 17/01/2014
 // ------------------------------------------------
 
 if( !defined("_MODULE_NAME") ) { define( "_MODULE_NAME" , "dfsi" ); }                                               // nom du module
