@@ -375,13 +375,38 @@ function dfsi_node_view($node, $view_mode)
         {
             if ($view_mode == 'full')
             {
-                // test données complémentaires
-                $node->content['custom_field'] = array
+                drupal_add_js('misc/form.js');
+                drupal_add_js('misc/collapse.js');
+                
+                $fieldsetTitle = t('Données complémentaires');
+                $fieldsetDescription = t('Données relatives aux type de service');
+                $fieldsetContent = '(en construction)';
+                
+                $html = '<fieldset id="fieldset-id" class="collapsible">';
+                $html .= '<legend><span class="fieldset-legend">'.$fieldsetTitle.'</span></legend>';
+                $html .= '<div class="fieldset-wrapper">';
+                $html .= '<div class="fieldset-description">'.$fieldsetDescription.'</div>';
+                $html .= $fieldsetContent;
+                $html .= '</div>';
+                $html .= '</fieldset>';
+                
+                $node->content['DetailData']= array
                 (
-                    '#markup' => '<br/><br/>Données potentielles complémentaires (en construction)',
-                    '#weight' => 255, 
-                );                            
+                    '#markup' => $html,  
+                    '#suffix' => '<br/><br/>',
+                    '#weight' => 255,
+                );                        
             }
         }
     }
 }
+
+
+//    $form['Jeux de test'] = array
+//    (
+//        '#type' => 'fieldset',
+//        '#title' => t('Jeux de test'),
+//        '#description' => t('Génération ou suppression de données de test.'),
+//        '#collapsible' => TRUE,
+//        '#collapsed' => TRUE
+//    );
