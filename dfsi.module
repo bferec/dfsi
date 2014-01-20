@@ -346,7 +346,8 @@ function dfsi_node_access($node, $op, $account)
     return NODE_ACCESS_DENY;
 
     
-                }
+}
+
 // ---------------
 // hook_node_view
 // ---------------
@@ -369,30 +370,22 @@ function dfsi_node_view($node, $view_mode)
             hide($node->content['field_contenu']);
         }
         
+        
         // possibilité d'afficher des données complémentaires 
         // pour le type de service en question ?        
         if( dfsi_IsComplementaryDataEnabled( $node ) )
         {
+            // affichage complet ?
             if ($view_mode == 'full')
             {
+                // javascript pour section repliable
                 drupal_add_js('misc/form.js');
                 drupal_add_js('misc/collapse.js');
-                
-                $fieldsetTitle = t('Données complémentaires');
-                $fieldsetDescription = t('Données relatives au type de service');
-                $fieldsetContent = '(en construction)';
-                
-                $html = '<fieldset id="fieldset-id" class="collapsible">';
-                $html .= '<legend><span class="fieldset-legend">'.$fieldsetTitle.'</span></legend>';
-                $html .= '<div class="fieldset-wrapper">';
-                $html .= '<div class="fieldset-description">'.$fieldsetDescription.'</div>';
-                $html .= $fieldsetContent;
-                $html .= '</div>';
-                $html .= '</fieldset>';
-                
+
+                $detailSection  = dfsi_GetComplementaryDataSection( $node );                 
                 $node->content['DetailData']= array
                 (
-                    '#markup' => $html,  
+                    '#markup' => $detailSection,  
                     '#suffix' => '<br/><br/>',
                     '#weight' => 255,
                 );                        
