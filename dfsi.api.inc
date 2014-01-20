@@ -566,3 +566,22 @@ function dfsi_ComplementaryDataEnabled()
 {
     return variable_get("dfsi_use_chunk",0) == 1;
 }
+
+
+function dfsi_GetComplementaryDataSection( $node )
+{
+                   
+    $fieldsetTitle = t('Données complémentaires');
+    $fieldsetDescription = t('Données relatives au type de service');
+    $fieldsetContent = '(en construction)';
+
+    $html = '<fieldset id="fieldset-id" class="collapsible">';
+    $html .= '<legend><span class="fieldset-legend">'.$fieldsetTitle.'</span></legend>';
+    $html .= '<div class="fieldset-wrapper">';
+    $html .= '<div class="fieldset-description">'.$fieldsetDescription.'</div>';
+    $html .= $fieldsetContent;
+    $html .= '</div>';
+    $html .= '</fieldset>';    
+                
+     return $html;           
+}
