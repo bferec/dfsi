@@ -393,13 +393,3 @@ function dfsi_node_view($node, $view_mode)
         }
     }
 }
-
-
-//    $form['Jeux de test'] = array
-//    (
-//        '#type' => 'fieldset',
-//        '#title' => t('Jeux de test'),
-//        '#description' => t('Génération ou suppression de données de test.'),
-//        '#collapsible' => TRUE,
-//        '#collapsed' => TRUE
-//    );

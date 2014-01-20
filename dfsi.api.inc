@@ -568,13 +568,63 @@ function dfsi_ComplementaryDataEnabled()
 }
 
 
+function dfsi_CreateDetailFieldsetContent($node,$key,$contentTypeName)
+{
+    // creation de la section repliable correspondant au type de contenu détail
+    $fieldsetContent  = '<fieldset id="fieldset-'.$key.'" class="collapsible">';
+    $fieldsetContent .= '<legend><span class="fieldset-legend">'.t($key." - (".$contentTypeName['label'].")").'</span></legend>';  
+    $fieldsetContent .= '<div class="fieldset-wrapper">';
+    $fieldsetContent .= '<div class="fieldset-description">'.''.'</div>';   
+
+    // recheche d'eixtence de données saisies pour ce type de contenu de détail
+    $detailNode = dfsi_ExistDetailContent(dfsi_GetNidOf($node),$contentTypeName['vid'],$contentTypeName['tid'] );
+    // trouvées...
+    if( $detailNode != null )
+    { 
+        $wrapper = entity_metadata_wrapper('node', $detailNode);
+
+        $fields_infos = field_info_instances('node',$contentTypeName['ctname']);
+        foreach( $fields_infos as $key => $field_info )
+        {
+            $fieldsetContent .= "<b>".$field_info['label'].":</b>&nbsp;".$wrapper->$key->value()."<br/>";
+        }
+
+    }
+    // pas de données saisie
+    else
+    {
+       $fieldsetContent .= t("Pas de données de détail définies pour le terme ".$key.".");
+    }
+
+    $fieldsetContent .= '</div>';
+    $fieldsetContent .= '</fieldset>';  
+    
+    return $fieldsetContent;
+}
+
 function dfsi_GetComplementaryDataSection( $node )
 {
                    
     $fieldsetTitle = t('Données complémentaires');
-    $fieldsetDescription = t('Données relatives au type de service');
-    $fieldsetContent = '(en construction)';
-
+    $fieldsetDescription = t('');
+    
+    $contentTypeNames = FindDetailContentTypeNames( $node );
+    // aucun type de contenu de détail existant pour cet élément
+    if( count($contentTypeNames) == 0 )
+    {
+            $fieldsetContent = t('Aucune type de contenu défini pour les termes de taxonomie applicables à ce service');
+    }
+    // des types de contenu de données complémentaires sont définis
+    else
+    {
+        // pour tous les types de contenus
+        foreach ($contentTypeNames as $key => $contentTypeName)
+        {    
+            // créer la section repliable contenant les infos pour ces details de type de contenu
+            $fieldsetContent = dfsi_CreateDetailFieldsetContent($node,$key,$contentTypeName);
+        }
+    }
+    // 
     $html = '<fieldset id="fieldset-id" class="collapsible">';
     $html .= '<legend><span class="fieldset-legend">'.$fieldsetTitle.'</span></legend>';
     $html .= '<div class="fieldset-wrapper">';
@@ -584,4 +634,91 @@ function dfsi_GetComplementaryDataSection( $node )
     $html .= '</fieldset>';    
                 
      return $html;           
+}
+
+// ------------------------------------------------
+// recherche des noms de types de contenus existant
+// pour un detail associé à un terme de contenu
+// ------------------------------------------------
+function FindDetailContentTypeNames( $node )
+{
+   $result = array();
+   $existingTypeNames = array();
+   $detail_terme_names = array();
+   //recherche des contenus de detail existants
+   $sqlRequest = db_select(_DFSI_DETAIL_TABLE, 'dt' )
+    ->fields
+         ( 
+                 'dt', 
+                 array
+                 ( 
+                     'did',
+                     'type'
+                 ) 
+         )
+    -> execute();
+   while( $typeName = $sqlRequest-> fetchAssoc() )
+   {
+       $existingTypeNames[] = $typeName['type'];
+   }   
+   if( count($existingTypeNames) > 0  )
+   {  
+        // recuperer tous les champs du noeud
+        $wrapper = entity_metadata_wrapper('node', $node);
+        $fields = field_info_instances("node",dfsi_GetTypeOf($node) );
+
+        // pour chaque champ
+        foreach( $fields as $fieldName => $field)
+        {      
+            $label = $field['label'];
+            $fieldInfo = field_info_field($field['field_name']);
+            $fieldType = $fieldInfo['type'];
+            // si terme de taxonomie
+            if( $fieldType == 'taxonomy_term_reference')
+            {
+                $terms = $wrapper->$fieldName->value();
+                // terme de taxonomie monovalué
+                if( isset($terms -> tid) )
+                {
+
+                    $tid = $terms -> tid;
+                    $vid = $terms -> vid;
+                    $ctname = $vid.$tid."_detail";
+                    // in existe un contenu de détail pour ce terme
+                    if( in_array($ctname,$existingTypeNames))
+                    {
+                             $detail_terme_names[$terms->name]['ctname'] =  $ctname;
+                             $detail_terme_names[$terms->name]['termName'] =  $terms->name;
+                             $detail_terme_names[$terms->name]['vid'] =  $vid;
+                             $detail_terme_names[$terms->name]['tid'] =  $tid;
+                             $detail_terme_names[$terms->name]['label'] =  $label;
+                    }
+                }
+                // terme de taxonomie multivalué
+                else if ( $terms != NULL )
+                {
+                    foreach($terms as $term )
+                    {
+                        if($term != NULL )
+                        {
+                             $tid = $term -> tid;
+                             $vid = $term -> vid;                   
+                             $ctname = $vid.$tid."_detail";
+                             // in existe un contenu de détail pour ce terme
+                             if( in_array($ctname,$existingTypeNames))
+                             {
+                                 $detail_terme_names[$term->name]['ctname'] =  $ctname;
+                                 $detail_terme_names[$term->name]['termName'] =  $terms->name;                                 
+                                 $detail_terme_names[$term->name]['vid'] =  $vid;
+                                 $detail_terme_names[$term->name]['tid'] =  $tid;                                 
+                                 $detail_terme_names[$term->name]['label'] =  $label;                        
+                             }
+                        }
+                    }
+                }               
+            }       
+        }    
+    }
+   $result = $detail_terme_names;  
+   return $result;
 }
