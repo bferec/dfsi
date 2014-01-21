@@ -393,3 +393,48 @@ function dfsi_node_view($node, $view_mode)
         }
     }
 }
+
+
+function dfsi_init() {
+  if (isset($_GET['dfsi-detail-show'])) {
+    popup_forms_parent_js();
+    $js = "
+      (function($) {
+        $(document).ready(function() {
+          popupFormsFormShow('dfsi_detail_form', null, {arg: Math.random()});
+        });
+      })(jQuery);
+    ";
+    drupal_add_js($js, 'inline');
+  }
+}
+/**
+ * Implements hook_popup_forms_data().
+ */
+function dfsi_popup_forms_data() 
+{
+    return array
+    (
+        'dfsi_detail_form' => array
+        (
+            'access callback' => TRUE,
+            'form arguments' => array
+            (
+                'arg' => NULL,
+            ),
+        ),
+    );
+}
+/**
+ * Form construction callback for example dfsi_detailform.
+ */
+function dfsi_detail_form($form, &$form_state, $arg) 
+{
+    $form['arg'] = array
+    (
+        '#type' => 'item',
+        '#title' => t('The argument you passed into the form is'),
+        '#markup' => check_plain($arg),
+    );
+    return $form;
+}

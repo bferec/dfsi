@@ -14,6 +14,29 @@ module_load_include( _INCLUDE_EXTENSION , _MODULE_NAME , "dfsi.define");
 // -----------------
 // Hook_settings
 // -----------------
+/*
+function dfsi_Export_settings()
+{
+    $dfsi_Preferred_ExportMode=variable_get("dfsi_Preferred_ExportMode", 1 );
+
+        $form['modeExport'] = array
+        (
+            '#type' => 'radios',
+            '#title' => t("Mode d'exportation"),
+            '#options' => array
+            (
+                1 =>t('Csv'),
+                2 =>t('Xml'),
+            ),
+            '#default_value' => $dfsi_Preferred_ExportMode,
+            
+        );
+    $form['#submit'][] = 'dfsi_Export_settings_form_submit';
+    return system_settings_form($form);
+}
+
+  */
+ 
 function dfsi_settings() 
 { 
 
@@ -126,6 +149,17 @@ function dfsi_settings_validate($form, &$form_state)
 {
 }
 
+
+/*
+function dfsi_Export_settings_form_submit($form, &$form_state) 
+{    
+    $dfsi_choosed_mode = $form_state['values']['modeExport'];
+    //dpm($dfsi_choosed_mode);
+
+    variable_set("dfsi_Preferred_ExportMode", $dfsi_choosed_mode );
+
+}
+*/
 // -----------------
 // Hook_submit
 // -----------------

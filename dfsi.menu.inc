@@ -125,6 +125,18 @@ function dfsi_menu()
         'file' => 'dfsi.admin.inc'
     );    
 
+/*    
+    // url de configuration de l'exportation
+    $items['admin/config/dfsi/export'] = array
+    (
+        'title' => "Parametres d'exportation",
+        'description' => "Définir le type d'exportation préféré",
+        'access arguments' => array('administer module dfsi'),
+        'page callback' => 'drupal_get_form',
+        'page arguments' => array('dfsi_Export_settings'),
+        'file' => 'dfsi.admin.inc'
+    ); 
+*/    
     // lien permettant de desactiver un noeud
     $items['modifyStatut/%'] = array
     (
