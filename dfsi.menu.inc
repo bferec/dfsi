@@ -109,7 +109,7 @@ function dfsi_menu()
         'position' => 'right',
         'weight' => -15,
         'page callback' => 'system_admin_menu_block_page',
-        'access arguments' => array('administer registerall'),
+        'access arguments' => array('administer module dfsi'),
         'file' => 'system.admin.inc',
         'file path' => drupal_get_path('module', 'system'),
     );

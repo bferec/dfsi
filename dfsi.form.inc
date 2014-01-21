@@ -48,9 +48,9 @@ function dfsi_IsAddForm($form)
 // ------------------------------------------------
 //  submit sous formulaire
 // ------------------------------------------------
-function dfsi_subform_form_submit($form, &$form_state) 
+function dfsi_detail_ajax_callback($form, &$form_state) 
 {
-        dpm("dfsi_subform_form_submit");
+        dpm($form);
 }
 // -------------------------------------------
 // mise en place du formulaire d'ajout de detail
@@ -63,7 +63,14 @@ function dfsi_CreateDetailForm($form,$node,$contentTypeName)
     unset($subform['actions']['preview']);    
     // TODO etiquette sur même ligne + boutton submit..
     hide($subform['additional_settings']); 
-        
+    $subform['#prefix'] = '<div id="container">';
+    $subform['#suffix'] = '</div>';
+    $subform['actions']['submit']['#ajax'] = array
+    (
+        'callback' => 'dfsi_detail_ajax_callback',
+        'wrapper' => 'container',        
+    );
+    $subform['#submit'][] = 'dfsi_detail_ajax_callback';
     return $subform;
 }
 // -------------------------------------------
@@ -354,9 +361,9 @@ function dfsi_AddSubForms(&$form, $contentTypeNames)
             // ajout au formulaire principal
             $form['DetailDataSection'][$key]['formulaire'] = $subform;
 
-            unset($form['DetailDataSection'][$key]['formulaire']['actions']['submit']);
-            unset($form['DetailDataSection'][$key]['formulaire']['#submit']);
-
+            //unset($form['DetailDataSection'][$key]['formulaire']['actions']['submit']);
+            //unset($form['DetailDataSection'][$key]['formulaire']['#submit']);
+/*
             $saveButton= array
             (
                 //'#executes_submit_callback' => TRUE,
@@ -371,6 +378,7 @@ function dfsi_AddSubForms(&$form, $contentTypeNames)
                 ),
             );  
             $form['DetailDataSection']['Serveur']['formulaire']['actions']['submit'] = $saveButton;
+            */
             //
             
         }

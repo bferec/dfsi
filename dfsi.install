@@ -370,7 +370,7 @@ function dfsi_schema()
                         (
 			        'type' => 'int',
 			        'not null' => TRUE,
-			        'description' => 'foreign key du detail-> table _DFSI_DETAIL_TABLE',                            
+			        'description' => 'foreign key de  _DFSI_DETAIL_TABLE',                            
                         ), 
                         'vid' => array
                         (
@@ -390,7 +390,7 @@ function dfsi_schema()
 		(
       			'nid'    => array('nid'),
 			'did' => array('did'),
-                        'ndid' => array('ndid'),
+                        'vid' => array('vid'),
                         'nid_did_vid_tid'=> array('nid','did','vid', 'tid'),
 		),            
         );
