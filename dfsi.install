@@ -53,6 +53,15 @@ function dfsi_Create_variables()
     variable_set('dfsi_warning_icon', "orange_button.png");
     variable_set('dfsi_error_icon', "red_button.png");
 }
+
+// --------------------------------------------------
+// creation des variables par defaut pour les statuts
+// --------------------------------------------------
+function dfsi_Delete_variables()
+{
+    db_query("DELETE FROM {variable} WHERE name LIKE 'dfsi_%'");
+}
+
 // ---------------------------------------------------------------
 // ---------------------------------------------------------------
 //  hook_install().
@@ -214,7 +223,10 @@ function dfsi_uninstall()
 	}		
 
         dfsi_DeleteDateFormat();
-	//
+
+        
+        dfsi_Delete_variables();
+//
 	// ----------------------------------
 	// purger toutes les infos des champs
 	// ----------------------------------

@@ -141,6 +141,15 @@ function dfsi_menu()
     'access callback' => TRUE,
     );
      
+        // detail/noeud/type de contenu
+    $items['detail/%/%'] = array
+    (
+        'access arguments' => array('change node statut dfsi'),
+        'page callback' => 'dfsi_ModifyStatut',
+        'page arguments' => array(1),
+        'file' => 'dfsi.module'
+    );
+    
     return $items;  
 }
 
