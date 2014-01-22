@@ -33,3 +33,9 @@ if( !defined("_DFSI_NID") ) { define( "_DFSI_NID" , "nid" ); }                  
 if( !defined("_DFSI_UNKNOWN_SERVICE_TYPE") ) { define( "_DFSI_UNKNOWN_SERVICE_TYPE" , "** Indéterminé **" ); }      // type de service inconnu
 
 if( !defined("_DFSI_TRUNCATE_COMMENT_LENGTH") ) { define( "_DFSI_TRUNCATE_COMMENT_LENGTH" , 80 ); }                 // longueur maxi description type de contenu avant troncatue
+if( !defined("_DFSI_CHUNK_DATA_ENABLED") ) { define( "_DFSI_CHUNK_DATA_ENABLED" , 1 ); }                            // donnees complementaires activees
+if( !defined("_DFSI_CHUNK_DATA_DISABLED") ) { define( "_DFSI_CHUNK_DATA_DISABLED" , 2 ); }                          // donnees complementaires activees
+
+if( !defined("_DFSI_GENERATE_TESTDATA") ) { define( "_DFSI_GENERATE_TESTDATA" , 1 ); }                              // generer donnees de test
+if( !defined("_DFSI_DELETE_TESTDATA") ) { define( "_DFSI_DELETE_TESTDATA" , 1 ); }                                  // generer donnees de test
+if( !defined("_DFSI_GENERATE_DO_NOTHING") ) { define( "_DFSI_GENERATE_DO_NOTHING" , 2 ); }                          // ne pas generer

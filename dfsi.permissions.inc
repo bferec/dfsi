@@ -23,64 +23,70 @@ function dfsi_permission()
     (
         'administer module dfsi' => array
         (
-        'title' => t('Configurer le module DFSI'),
-        'description' => t("permission de modifier les paramètres de l'application")
+        'title' => t("Configurer le module ")._MODULE_COMMERCIAL_NAME,
+        'description' => t("permission de modifier les paramètres de l'application"),
         ),
         "change node statut dfsi" => array
         (
-        'title' => t("Modifier le statut d'un noeud  DFSI"),
+        'title' => t("Modifier le statut d'un noeud  ")._MODULE_COMMERCIAL_NAME,
         'description' => t("permission de modifier l'état d'un noeud, actif ou inactif")
         ),
+        "manage dfsi detail data activation" => array
+        (
+        'title' => t("Activer ou désactiver la gestion des données complémentaires ")._MODULE_COMMERCIAL_NAME,
+        'description' => t("permission d'activer/désactiver la prise en charge des données complémentaires")
+        ),        
         // ------------------------------
         // permissions liees aux services
         // ------------------------------
         "view service dfsi" => array
         (
-        'title' => t("Consulter un service DFSI"),
-        'description' => t("permission de consulter un service DFSI")
+        'title' => t("Consulter un service ")._MODULE_COMMERCIAL_NAME,
+        'description' => t("permission de consulter un service")
         ),
         "create service dfsi" => array
         (
-        'title' => t("Ajouter un service DFSI"),
-        'description' => t("permission d'ajouter un service DFSI")
+        'title' => t("Ajouter un service ")._MODULE_COMMERCIAL_NAME,
+        'description' => t("permission d'ajouter un service")
         ),
         "update service dfsi" => array
         (
-        'title' => t("Modifier un service DFSI"),
-        'description' => t("permission de modifier un service DFSI")
+        'title' => t("Modifier un service ")._MODULE_COMMERCIAL_NAME,
+        'description' => t("permission de modifier un service")
         ),    
         "delete service dfsi" => array
         (
-        'title' => t("supprimer un service DFSI"),
-        'description' => t("permission de supprimer un service DFSI")
+        'title' => t("supprimer un service ")._MODULE_COMMERCIAL_NAME,
+        'description' => t("permission de supprimer un service")
         ),        
         // --------------------------------
         // permissions liees aux containers
         // --------------------------------
         "view container dfsi" => array
         (
-        'title' => t("Consulter un container DFSI"),
-        'description' => t("permission de consulter un container DFSI")
+        'title' => t("Consulter un container ")._MODULE_COMMERCIAL_NAME,
+        'description' => t("permission de consulter un container")
         ),        
         "create container dfsi" => array
         (
-        'title' => t("creer un container DFSI"),
-        'description' => t("permission d'ajouter un container DFSI")
+        'title' => t("creer un container ")._MODULE_COMMERCIAL_NAME,
+        'description' => t("permission d'ajouter un container")
         ),
         "update container dfsi" => array
         (
-        'title' => t("modifier un container DFSI"),
-        'description' => t("permission de modifier un container DFSI")
+        'title' => t("modifier un container ")._MODULE_COMMERCIAL_NAME,
+        'description' => t("permission de modifier un container")
         ),
         "delete container dfsi" => array
         (
-        'title' => t("supprimer un container DFSI"),
-        'description' => t("permission de supprimer un container DFSI")
+        'title' => t("supprimer un container ")._MODULE_COMMERCIAL_NAME,
+        'description' => t("permission de supprimer un container")
         ),
+        // permissions liees aux type de contenu detail
         "Add detail content type to dfsi term" => array
         (
-        'title' => t("Ajouter un type de contenu de détail spécifique à un terme de taxonomie"),
-        'description' => t("permission de créer un content type de détail DFSI")
+        'title' => t("Ajouter un type de contenu de détail spécifique à un terme de taxonomie ")._MODULE_COMMERCIAL_NAME,
+        'description' => t("permission de créer un content type de détail")
         ),
     );
 }
