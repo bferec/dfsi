@@ -115,7 +115,7 @@ function dfsi_DetailAddForm_submit($form, &$form_state)
 // -------------------------------------
 function dfsi_AddDetailComplementType($args)
 {
-    dpm($args);
+    //dpm($args);
     
     /*
     $PopupArgs = json_encode

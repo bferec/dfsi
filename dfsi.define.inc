@@ -31,11 +31,33 @@ if( !defined("_DFSI__NODEP_SEARCH") ) { define( "_DFSI__NODEP_SEARCH" , 2 ); }  
 if( !defined("_DFSI_TITLE") ) { define( "_DFSI_TITLE" , "title" ); }                                                // nom du champ title
 if( !defined("_DFSI_NID") ) { define( "_DFSI_NID" , "nid" ); }                                                      // nom du champ node id (nid)
 if( !defined("_DFSI_UNKNOWN_SERVICE_TYPE") ) { define( "_DFSI_UNKNOWN_SERVICE_TYPE" , "** Indéterminé **" ); }      // type de service inconnu
-
 if( !defined("_DFSI_TRUNCATE_COMMENT_LENGTH") ) { define( "_DFSI_TRUNCATE_COMMENT_LENGTH" , 80 ); }                 // longueur maxi description type de contenu avant troncatue
+// donneed de detail
 if( !defined("_DFSI_CHUNK_DATA_ENABLED") ) { define( "_DFSI_CHUNK_DATA_ENABLED" , 1 ); }                            // donnees complementaires activees
 if( !defined("_DFSI_CHUNK_DATA_DISABLED") ) { define( "_DFSI_CHUNK_DATA_DISABLED" , 2 ); }                          // donnees complementaires activees
 
+// données de test
 if( !defined("_DFSI_GENERATE_TESTDATA") ) { define( "_DFSI_GENERATE_TESTDATA" , 1 ); }                              // generer donnees de test
 if( !defined("_DFSI_DELETE_TESTDATA") ) { define( "_DFSI_DELETE_TESTDATA" , 1 ); }                                  // generer donnees de test
 if( !defined("_DFSI_GENERATE_DO_NOTHING") ) { define( "_DFSI_GENERATE_DO_NOTHING" , 2 ); }                          // ne pas generer
+
+// permissions
+if( !defined("_DFSI_PERM_CONFIG") ) { define( "_DFSI_PERM_CONFIG" , "dfsi: admin config" ); }                          // dfsi config permission
+if( !defined("_DFSI_PERM_CHANGE_NODE_STATUT") ) { define( "_DFSI_PERM_CHANGE_NODE_STATUT" , "dfsi: change node statut" ); }                          // dfsi change node statut permission
+
+if( !defined("_DFSI_PERM_CHUK_DATA_ACTIVATION") ) { define( "_DFSI_PERM_CHUK_DATA_ACTIVATION" , "dfsi: chunk data activation" ); }
+
+if( !defined("_DFSI_PERM_VIEW_SERVICE") ) { define( "_DFSI_PERM_VIEW_SERVICE" , "dfsi: view service" ); }
+if( !defined("_DFSI_PERM_CREATE_SERVICE") ) { define( "_DFSI_PERM_CREATE_SERVICE" , "dfsi: create service" ); }
+if( !defined("_DFSI_PERM_UPDATE_SERVICE") ) { define( "_DFSI_PERM_UPDATE_SERVICE" , "dfsi: update service" ); }
+if( !defined("_DFSI_PERM_DELETE_SERVICE") ) { define( "_DFSI_PERM_DELETE_SERVICE" , "dfsi: delete service" ); }
+
+if( !defined("_DFSI_PERM_VIEW_CONTAINER") ) { define( "_DFSI_PERM_VIEW_CONTAINER" , "dfsi: view container" ); }
+if( !defined("_DFSI_PERM_CREATE_CONTAINER") ) { define( "_DFSI_PERM_CREATE_CONTAINER" , "dfsi: create container" ); }
+if( !defined("_DFSI_PERM_UPDATE_CONTAINER") ) { define( "_DFSI_PERM_UPDATE_CONTAINER" , "dfsi: update container" ); }
+if( !defined("_DFSI_PERM_DELETE_CONTAINER") ) { define( "_DFSI_PERM_DELETE_CONTAINER" , "dfsi: delete container" ); }
+
+if( !defined("_DFSI_PERM_ADD_CHUNK_DATA_TYPE") ) { define( "_DFSI_PERM_ADD_CHUNK_DATA_TYPE" , "dfsi: add chunk data type" ); }
+if( !defined("_DFSI_PERM_DELETE_CHUNK_DATA_TYPE") ) { define( "_DFSI_PERM_DELETE_CHUNK_DATA_TYPE" , "dfsi: delete chunk data type" ); }
+
+

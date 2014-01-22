@@ -90,7 +90,7 @@ function dfsi_settings()
         '#default_value' => variable_get('dfsi_error_icon', "red_button.png")
     );
     
-    if(user_access('manage dfsi detail data activation') )
+    if(user_access(_DFSI_PERM_CHUK_DATA_ACTIVATION) )
     {
         $form['Données complémentaires'] = array
         (
@@ -134,7 +134,7 @@ function dfsi_settings_validate($form, &$form_state)
 function dfsi_settings_form_submit($form, &$form_state) 
 {    
     
-    if( user_access('manage dfsi detail data activation') )
+    if( user_access(_DFSI_PERM_CHUK_DATA_ACTIVATION) )
     {
         variable_set("dfsi_use_chunk",$form['Données complémentaires']['dfsi_use_chunk']['#value']);
         //drupal_flush_all_caches();

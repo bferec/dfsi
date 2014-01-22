@@ -21,17 +21,19 @@ function dfsi_permission()
 {
     return array
     (
-        'administer module dfsi' => array
+        //  configuration permission
+        _DFSI_PERM_CONFIG => array
         (
         'title' => t("Configurer le module ")._MODULE_COMMERCIAL_NAME,
         'description' => t("permission de modifier les paramètres de l'application"),
         ),
-        "change node statut dfsi" => array
+        // node statut permission
+        _DFSI_PERM_CHANGE_NODE_STATUT => array
         (
         'title' => t("Modifier le statut d'un noeud  ")._MODULE_COMMERCIAL_NAME,
         'description' => t("permission de modifier l'état d'un noeud, actif ou inactif")
         ),
-        "manage dfsi detail data activation" => array
+        _DFSI_PERM_CHUK_DATA_ACTIVATION  => array
         (
         'title' => t("Activer ou désactiver la gestion des données complémentaires ")._MODULE_COMMERCIAL_NAME,
         'description' => t("permission d'activer/désactiver la prise en charge des données complémentaires")

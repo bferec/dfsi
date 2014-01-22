@@ -39,7 +39,8 @@ function dfsi_menu()
             'title' => t("Ajouter un type de contenu de détail"),
             'type' => MENU_LOCAL_ACTION,
             'page callback' => 'dfsi_AddDetailComplementType',   
-            'access callback' => array("Add detail content type to dfsi term"),    
+            'access callback' => true,
+            'access arguments' => array(_DFSI_PERM_ADD_CHUNK_DATA_TYPE),
             'page arguments' => array(2),
             'file' => 'dfsi.details.inc',
 
@@ -50,6 +51,7 @@ function dfsi_menu()
             'type' => MENU_LOCAL_ACTION,
             'page callback' => 'dfsi_EditDetailComplementType',   
             'access callback' => TRUE,    
+            'access arguments' => array(_DFSI_PERM_UPDATE_CHUNK_DATA_TYPE),            
             'page arguments' => array(2),
             'file' => 'dfsi.details.inc',
 
@@ -60,6 +62,7 @@ function dfsi_menu()
             'type' => MENU_LOCAL_ACTION,
             'page callback' => 'dfsi_DeleteDetailComplementType',   
             'access callback' => TRUE,    
+            'access arguments' => array(_DFSI_PERM_DELETE_CHUNK_DATA_TYPE),
             'page arguments' => array(2),
             'file' => 'dfsi.details.inc',
 
@@ -109,7 +112,7 @@ function dfsi_menu()
         'position' => 'right',
         'weight' => -15,
         'page callback' => 'system_admin_menu_block_page',
-        'access arguments' => array('administer module dfsi'),
+        'access arguments' => array(_DFSI_PERM_CONFIG),
         'file' => 'system.admin.inc',
         'file path' => drupal_get_path('module', 'system'),
     );
@@ -119,28 +122,17 @@ function dfsi_menu()
     (
         'title' => t('Configuration ')._MODULE_COMMERCIAL_NAME,
         'description' => t("Jeu de test et paramètres de l'appplication"._MODULE_COMMERCIAL_NAME ),
-        'access arguments' => array('administer module dfsi'),
+        'access arguments' => array(_DFSI_PERM_CONFIG),
         'page callback' => 'drupal_get_form',
         'page arguments' => array('dfsi_settings'),
         'file' => 'dfsi.admin.inc'
     );    
 
-/*    
-    // url de configuration de l'exportation
-    $items['admin/config/dfsi/export'] = array
-    (
-        'title' => "Parametres d'exportation",
-        'description' => "Définir le type d'exportation préféré",
-        'access arguments' => array('administer module dfsi'),
-        'page callback' => 'drupal_get_form',
-        'page arguments' => array('dfsi_Export_settings'),
-        'file' => 'dfsi.admin.inc'
-    ); 
-*/    
+ 
     // lien permettant de desactiver un noeud
     $items['modifyStatut/%'] = array
     (
-        'access arguments' => array('change node statut dfsi'),
+        'access arguments' => array(_DFSI_PERM_CHANGE_NODE_STATUT),
         'page callback' => 'dfsi_ModifyStatut',
         'page arguments' => array(1),
         'file' => 'dfsi.module'
@@ -153,10 +145,10 @@ function dfsi_menu()
     'access callback' => TRUE,
     );
      
-        // detail/noeud/type de contenu
+    // detail/noeud/type de contenu
     $items['detail/%/%'] = array
     (
-        'access arguments' => array('change node statut dfsi'),
+        'access arguments' => array(_DFSI_PERM_CHANGE_NODE_STATUT),
         'page callback' => 'dfsi_ModifyStatut',
         'page arguments' => array(1),
         'file' => 'dfsi.module'

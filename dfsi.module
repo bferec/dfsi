@@ -273,10 +273,8 @@ function dfsi_field_formatter_view($entity_type, $entity, $field, $instance, $la
 // ----------------
 function dfsi_node_access($node, $op, $account) 
 {
-  
-  $r = menu_local_tasks(0);
-  
-  $type = is_string( $node) ? $node : dfsi_GetTypeOf($node);
+
+  $type = is_string($node) ? $node : dfsi_GetTypeOf($node);
     if (! is_object( $node ) )            
     {
         return NODE_ACCESS_IGNORE;
