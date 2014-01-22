@@ -24,7 +24,7 @@ function dfsi_ComplementDataTypePage($args)
     $type = dfsi_GetTermContentTypeRelation($did,$type,$args->vid,$args->tid);
     if($type == NULL)
     {
-        $output .= t("Pas de type de contenu de données complémentaires existant pour ce terme");
+        $output .= t("Il n'existe pas de type de contenu de données complémentaires pour ce terme");
     }
     else
     {
@@ -52,6 +52,59 @@ function dfsi_ComplementDataTypePage($args)
     }
     return $output;
 }
+
+
+// -------------------------------------------------
+// formulaire d'ajout d'un type de contenu detail
+// affiché en modal
+// -------------------------------------------------
+function dfsi_DetailAddForm($form, &$form_state, $vid , $tid , $taxonomyTermName ) 
+{
+    
+    $newContentTypeName = $vid .$tid ."_detail";
+    // nom lisible    
+    $humanName  = strtolower($taxonomyTermName)."_detail";
+    
+    $form['arg'] = array
+    (
+        '#type' => 'item',       
+        '#markup' => t("Le type de contenu [".$humanName."] (nom machine : [".$newContentTypeName."]) va être créé, pour le terme de taxonomie [".$taxonomyTermName."]"),
+    );
+    $form['actions'] = array('#type' => 'actions');
+    $form['actions']['submit'] = array
+    (
+        '#type' => 'submit',
+        '#value' => t('Enregistrer'),
+        '#suffix' => "&nbsp;"
+    );    
+    $form['actions']['cancel'] = array
+    (
+      '#type' => 'submit',
+      '#value' => t('Annuler'),
+    );    
+    $form['#submit'][] = 'dfsi_DetailAddForm_submit';
+    
+    $form['vid']= array( '#type' => 'hidden','#value' => $vid );
+    $form['tid']= array('#type' => 'hidden','#value' => $tid );
+    $form['taxonomyTermName']= array('#type' => 'hidden','#value' => $taxonomyTermName); 
+    $form['newContentTypeName']= array('#type' => 'hidden','#value' => $newContentTypeName); 
+    return $form;
+}
+
+// ------------------------------------------
+// callback function pour fsi_DetailAddForm()
+// ------------------------------------------
+function dfsi_DetailAddForm_submit($form, &$form_state) 
+{ 
+    // confirmation de creation du  type de contenu de detail
+     if($form_state['values']['op'] == t('Enregistrer') )
+     {
+         //dfsi_AddDetailRshp( $form['vid'] , $form['tid'] , $form['newContentTypeName']['#value'] );
+         //dfsi_createDetailContentType( $form['newContentTypeName']['#value'], $form['taxonomyTermName']['#value'] );
+         dsm("Le type de contenu ".$form['taxonomyTermName']['#value']."_detail à été créé...");
+     }
+}
+
 // -------------------------------------
 // creation du type de contenu de detail
 // et enregistrement dans la table
@@ -61,22 +114,51 @@ function dfsi_ComplementDataTypePage($args)
 // -------------------------------------
 function dfsi_AddDetailComplementType($args)
 {
+    dpm($args);
+    
+    /*
+    $PopupArgs = json_encode
+    (
+        array
+        (
+            'vid'=> $args->vid,
+            'tid'=> $args->tid,            
+            'taxonomyTermName' => $args->name
+        )
+    );
+    
+    popup_forms_parent_js();
+    
+
+      $js = "
+     
+        (function($) {
+        $(document).ready(function() {
+        popupFormsFormShow('dfsi_DetailAddForm',null,{$PopupArgs});
+        });
+        })(jQuery);
+    ";
+     */
+    
+    //drupal_add_js($js, 'inline');        
     // nom du type = idvocabulaire+idterme + '_detail'
-    $newContentName = $args->vid .$args->tid ."_detail";
+    //$newContentTypeName = $args->vid .$args->tid ."_detail";
     // nom lisible 
-    $humanName = strtolower($args->name."_detail");
-    dfsi_AddDetailRshp($args->vid,$args->tid,$newContentName);
-    dfsi_createDetailContentType($newContentName,$args);
-    drupal_goto("admin/structure/types/manage/".$newContentName);
+    //$humanName = strtolower($args->name."_detail");        
+    //dfsi_AddDetailRshp($args->vid,$args->tid,$newContentTypeName);
+    //dfsi_createDetailContentType($newContentTypeName,$args->name);
+    //drupal_goto("admin/structure/types/manage/".$newContentTypeName);
+    
 }
+
 // -------------------------------
 // modification du type de contenu 
 // associé à  un terme de txonomie
 // -------------------------------
 function dfsi_EditDetailComplementType($args)
 {
-   $newContentName = $args->vid .$args->tid ."_detail";
-   drupal_goto("admin/structure/types/manage/".$newContentName);    
+   $newContentTypeName = $args->vid .$args->tid ."_detail";
+   drupal_goto("admin/structure/types/manage/".$newContentTypeName);    
 }
 // -------------------------------
 // suppression du type de contenu 
@@ -92,12 +174,12 @@ function dfsi_DeleteDetailComplementType($args)
 }
 // -------------------------------
 // creation du type de contenu 
-// associé à  un terme de txonomie
+// associé à  un terme de taxonomie
 // -------------------------------
-function dfsi_createDetailContentType($machineName,$taxonomyTerm)
+function dfsi_createDetailContentType($machineName,$taxonomyTermName)
 {
     // nom lisible pour interface
-    $humanName  = strtolower($taxonomyTerm->name."_detail");
+    $humanName  = strtolower($taxonomyTermName."_detail");
     // definition du type
     $ct = array
     (
@@ -107,19 +189,14 @@ function dfsi_createDetailContentType($machineName,$taxonomyTerm)
         'title_label' => t("Titre ".$humanName),
         'sticky' => FALSE,
         'status' => TRUE,
-        'description' => t("Type de contenu  de données supplémentaires pour [@name]",  array('@name' => $taxonomyTerm->name) ),
+        'description' => t("Type de contenu  de données supplémentaires pour [@name]",  array('@name' => $taxonomyTermName) ),
         'custom' => FALSE,
         'locked' => 1
     );
-
   // autres elements en valeur par defaut
   $content_type = node_type_set_defaults($ct);
-
-  
   // ajout du champ nody
   //node_add_body_field($content_type, t("Informations supplémentaires pour [@name]",  array('@name' => $taxonomyTerm->name) );
-
-
   // sauvegarde
   node_type_save($content_type);
 

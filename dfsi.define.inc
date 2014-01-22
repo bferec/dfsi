@@ -7,6 +7,7 @@
 // ------------------------------------------------
 
 if( !defined("_MODULE_NAME") ) { define( "_MODULE_NAME" , "dfsi" ); }                                               // nom du module
+if( !defined("_MODULE_COMMERCIAL_NAME") ) { define( "_MODULE_COMMERCIAL_NAME" , "D.f.s.i." ); }                         // nom commercial du module
 
 if( !defined("_SERVICE") ) { define( "_SERVICE" , "itservice" ); }                                                  // nom de type d'element service
 if( !defined("_CONTAINER") ) { define( "_CONTAINER" , "itcontainer" ); }                                            // nom de type d'element container

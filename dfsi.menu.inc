@@ -26,7 +26,7 @@ function dfsi_menu()
     {
         $items['taxonomy/term/%taxonomy_term/Chunk'] = array
         (
-            'title' => "Données complémentaires" ,
+            'title' => t("Données complémentaires") ,
             'type' => MENU_LOCAL_TASK,
             'page callback' => 'dfsi_ComplementDataTypePage',    
             'access callback' => TRUE,    
@@ -36,17 +36,17 @@ function dfsi_menu()
         );
         $items['taxonomy/term/%taxonomy_term/Chunk/Add'] = array
         (   
-            'title' => "Ajouter",
+            'title' => t("Ajouter un type de contenu de détail"),
             'type' => MENU_LOCAL_ACTION,
             'page callback' => 'dfsi_AddDetailComplementType',   
-            'access callback' => TRUE,    
+            'access callback' => array("Add detail content type to dfsi term"),    
             'page arguments' => array(2),
             'file' => 'dfsi.details.inc',
 
         );
         $items['taxonomy/term/%taxonomy_term/Chunk/Edit'] = array
         (   
-            'title' => "Modifier",
+            'title' => t("Modifier"),
             'type' => MENU_LOCAL_ACTION,
             'page callback' => 'dfsi_EditDetailComplementType',   
             'access callback' => TRUE,    
@@ -56,7 +56,7 @@ function dfsi_menu()
         );
         $items['taxonomy/term/%taxonomy_term/Chunk/Delete'] = array
         (   
-            'title' => "Supprimer",
+            'title' => t("Supprimer"),
             'type' => MENU_LOCAL_ACTION,
             'page callback' => 'dfsi_DeleteDetailComplementType',   
             'access callback' => TRUE,    
@@ -69,7 +69,7 @@ function dfsi_menu()
     // menu local  task
     $items['node/%node/Dependants'] = array
     (
-        'title' => "Elements dépendants..." ,
+        'title' => t("Elements dépendants..." ),
         'type' => MENU_LOCAL_TASK,
         'page callback' => 'dfsi_elementsDependantsPage',    
         'access callback' => TRUE,        
@@ -82,7 +82,7 @@ function dfsi_menu()
     // menu local  task    
     $items['node/%node/DependsDe'] = array
     (
-      'title' => 'Dépends de...',
+      'title' => t('Dépends de...'),
       'type' => MENU_LOCAL_TASK,
       'page callback' => 'dfsi_dependsDePage',  
       'access callback' => TRUE,
@@ -94,7 +94,7 @@ function dfsi_menu()
     // menu local  task    
     $items['node/%node/Contient'] = array
     (
-      'title' => 'Contient...',
+      'title' => t('Contient...'),
       'type' => MENU_LOCAL_TASK,
       'page callback' => 'dfsi_ContientPage',  
       'access callback' => TRUE,
@@ -104,8 +104,8 @@ function dfsi_menu()
     );    
     $items['admin/config/dfsi'] = array
     (
-        'title' => 'D.f.s.i.',
-        'description' => 'Configurer Dfsi.',
+        'title' => _MODULE_COMMERCIAL_NAME,
+        'description' => t('Configurer ')._MODULE_COMMERCIAL_NAME,
         'position' => 'right',
         'weight' => -15,
         'page callback' => 'system_admin_menu_block_page',
@@ -117,8 +117,8 @@ function dfsi_menu()
     // url de configuration de l'application
     $items['admin/config/dfsi/settings'] = array
     (
-        'title' => 'Configuration dfsi',
-        'description' => "Jeu de test et paramètres de l'appplication D.f.s.i.",
+        'title' => t('Configuration ')._MODULE_COMMERCIAL_NAME,
+        'description' => t("Jeu de test et paramètres de l'appplication"._MODULE_COMMERCIAL_NAME ),
         'access arguments' => array('administer module dfsi'),
         'page callback' => 'drupal_get_form',
         'page arguments' => array('dfsi_settings'),
@@ -148,7 +148,7 @@ function dfsi_menu()
        
     $items['Noeuds_non_dépendants'] = array
     (
-    'title' => "Synthèse de dépendances",
+    'title' => t("Synthèse de dépendances"),
     'page callback' => 'dfsi_NoDependantList',
     'access callback' => TRUE,
     );

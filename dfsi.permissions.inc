@@ -77,9 +77,9 @@ function dfsi_permission()
         'title' => t("supprimer un container DFSI"),
         'description' => t("permission de supprimer un container DFSI")
         ),
-        "Add detail content type to term" => array
+        "Add detail content type to dfsi term" => array
         (
-        'title' => t("Ajouter un type de contenu de détail spéfifique à un terme de taxonomie"),
+        'title' => t("Ajouter un type de contenu de détail spécifique à un terme de taxonomie"),
         'description' => t("permission de créer un content type de détail DFSI")
         ),
     );

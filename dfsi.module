@@ -395,19 +395,33 @@ function dfsi_node_view($node, $view_mode)
 }
 
 
-function dfsi_init() {
-  if (isset($_GET['dfsi-detail-show'])) {
-    popup_forms_parent_js();
-    $js = "
-      (function($) {
-        $(document).ready(function() {
-          popupFormsFormShow('dfsi_detail_form', null, {arg: Math.random()});
-        });
-      })(jQuery);
-    ";
-    drupal_add_js($js, 'inline');
-  }
+/*
+function dfsi_init() 
+{
+    if (isset($_GET['dfsi-detail-show'])) 
+    {
+
+        $arg = array
+        (
+            'vid'=> '400',
+            'tid'=> '256',            
+            'taxonomyTermName' => 'Serveur'
+        );
+        $arguments = json_encode($arg);
+        
+        popup_forms_parent_js();
+        $js = "
+            (function($) {
+            $(document).ready(function() {
+            popupFormsFormShow('dfsi_DetailAddForm',null,{$arguments});
+            });
+            })(jQuery);
+        ";
+        drupal_add_js($js, 'inline');
+    }
 }
+ */
+
 /**
  * Implements hook_popup_forms_data().
  */
@@ -415,26 +429,19 @@ function dfsi_popup_forms_data()
 {
     return array
     (
-        'dfsi_detail_form' => array
+        'dfsi_DetailAddForm' => array
         (
+            'title' => t("Création du type de contenu"),
             'access callback' => TRUE,
             'form arguments' => array
             (
-                'arg' => NULL,
+                'vid'=> 'vid',
+                'tid'=> 'tid',
+                'taxonomyTermName'=> 'taxonomyTermName'
             ),
+            'close_buttons' => array('op'),
+            'file' => drupal_get_path('module', _MODULE_NAME)  . '/dfsi.details.inc',
+            'autopage' => TRUE,
         ),
     );
-}
-/**
- * Form construction callback for example dfsi_detailform.
- */
-function dfsi_detail_form($form, &$form_state, $arg) 
-{
-    $form['arg'] = array
-    (
-        '#type' => 'item',
-        '#title' => t('The argument you passed into the form is'),
-        '#markup' => check_plain($arg),
-    );
-    return $form;
 }

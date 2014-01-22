@@ -1,0 +1,8 @@
+<?php
+
+// Module exportation dfsi
+// Amael Hervoche
+// 21/01/2014
+
+module_load_include( 'inc' , 'dfsiexport' , "dfsiexport.permissions");
+module_load_include( 'inc' , 'dfsiexport' , "dfsiexport.menu");

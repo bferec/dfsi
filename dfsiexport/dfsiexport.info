@@ -1,0 +1,15 @@
+name = dfsiexport
+description = Gestion des exportations.
+core = 7.x
+version = "0.1"
+
+package = dfsi
+
+dependencies[] = dfsi
+
+configure = admin/config/dfsi/export
+
+files[] = dfsiexport.admin.inc
+files[] = dfsiexport.menu.inc
+files[] = dfsiexport.permissions.inc
+

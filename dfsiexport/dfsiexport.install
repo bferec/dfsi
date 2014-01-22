@@ -1,0 +1,49 @@
+<?php
+
+// dfsiexport.install
+// Amael Hervoche
+// 21/01/2014
+
+
+// --------------------------------------------------
+// Fonction d'installation du module
+// --------------------------------------------------
+function dfsiexport_install()
+{
+	// Appel de la fonction de création des variables
+	dfsiexport_Create_variables();
+}
+
+// --------------------------------------------------
+// Fonction de desinstallation du module
+// --------------------------------------------------
+function dfsiexport_uninstall()
+{
+	// Appel de la fonction de suppression des variables
+	dfsiexport_Delete_variables();
+}
+
+// --------------------------------------------------
+// Fonction de mise en place des tables du module
+// --------------------------------------------------
+function dfsiexport_schema()
+{
+
+}
+
+// --------------------------------------------------
+// suppression des variables
+// --------------------------------------------------
+function dfsiexport_Delete_variables()
+{
+    db_query("DELETE FROM {variable} WHERE name LIKE 'dfsiexport_%'");
+}
+
+
+// --------------------------------------------------
+// creation des variables par defaut pour les statuts
+// --------------------------------------------------
+function dfsiexport_Create_variables()
+{
+    variable_set('dfsiexport_Preferred_ExportMode', 1 );
+}
