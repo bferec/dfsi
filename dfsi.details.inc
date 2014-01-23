@@ -84,6 +84,7 @@ function dfsi_DetailAddForm($form, &$form_state, $vid , $tid , $taxonomyTermName
     );    
     $form['#submit'][] = 'dfsi_DetailAddForm_submit';
     
+    // champs cachés
     $form['vid']= array( '#type' => 'hidden','#value' => $vid );
     $form['tid']= array('#type' => 'hidden','#value' => $tid );
     $form['taxonomyTermName']= array('#type' => 'hidden','#value' => $taxonomyTermName); 

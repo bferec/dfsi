@@ -11,31 +11,6 @@ if( !defined("_INCLUDE_EXTENSION") ) { define( "_INCLUDE_EXTENSION" , "inc" ); }
 
 module_load_include( _INCLUDE_EXTENSION , _MODULE_NAME , "dfsi.define");
 
-// -----------------
-// Hook_settings
-// -----------------
-/*
-function dfsi_Export_settings()
-{
-    $dfsi_Preferred_ExportMode=variable_get("dfsi_Preferred_ExportMode", 1 );
-
-        $form['modeExport'] = array
-        (
-            '#type' => 'radios',
-            '#title' => t("Mode d'exportation"),
-            '#options' => array
-            (
-                1 =>t('Csv'),
-                2 =>t('Xml'),
-            ),
-            '#default_value' => $dfsi_Preferred_ExportMode,
-            
-        );
-    $form['#submit'][] = 'dfsi_Export_settings_form_submit';
-    return system_settings_form($form);
-}
-
-  */
  
 function dfsi_settings() 
 { 
@@ -57,10 +32,10 @@ function dfsi_settings()
             '#title' => t('Eléments de test'),
             '#options' => array
             (
-                t('Générer'),
-                t('Ne rien faire'),
+               _DFSI_GENERATE_TESTDATA => t('Générer'),
+               _DFSI_GENERATE_DO_NOTHING =>t('Ne rien faire'),
             ),
-            '#default_value' => variable_get('dfsi_generate_test_data',2),
+            '#default_value' => variable_get('dfsi_generate_test_data',_DFSI_GENERATE_DO_NOTHING),
         );
     }
     else
@@ -71,10 +46,10 @@ function dfsi_settings()
             '#title' => t('Eléments de test'),
             '#options' => array
             (
-                t('Supprimer'),
-                t('Ne rien faire'),
+                _DFSI_DELETE_TESTDATA =>t('Supprimer'),
+                _DFSI_GENERATE_DO_NOTHING =>t('Ne rien faire'),
             ),
-            '#default_value' => variable_get('dfsi_generate_test_data',1),
+            '#default_value' => variable_get('dfsi_generate_test_data',_DFSI_GENERATE_DO_NOTHING),
         );    
     }
     
@@ -115,26 +90,29 @@ function dfsi_settings()
         '#default_value' => variable_get('dfsi_error_icon', "red_button.png")
     );
     
-    $form['Données complémentaires'] = array
-    (
-        '#type' => 'fieldset',
-        '#title' => t('Données complémentaires'),
-        '#description' => t('Gestion des données spécifique à type de service'),
-        '#collapsible' => TRUE,
-        '#collapsed' => FALSE
-    );
-    
-    $form['Données complémentaires']['dfsi_use_chunk'] = array
-    (
-        '#type' => 'radios',
-        '#title' => t('Gestion des donnés complémentaires'),
-        '#options' => array
+    if(user_access(_DFSI_PERM_CHUK_DATA_ACTIVATION) )
+    {
+        $form['Données complémentaires'] = array
         (
-            1 => t('Activer'),
-            0 => t('Désactiver'),
-        ),
-        '#default_value' => variable_get("dfsi_use_chunk",0),
-    );    
+            '#type' => 'fieldset',
+            '#title' => t('Données complémentaires'),
+            '#description' => t('Gestion des données spécifique à type de service'),
+            '#collapsible' => TRUE,
+            '#collapsed' => FALSE
+        );
+
+        $form['Données complémentaires']['dfsi_use_chunk'] = array
+        (
+            '#type' => 'radios',
+            '#title' => t('Gestion des donnés complémentaires'),
+            '#options' => array
+            (
+                _DFSI_CHUNK_DATA_ENABLED => t('Activer'),
+                _DFSI_CHUNK_DATA_DISABLED => t('Désactiver'),
+            ),
+            '#default_value' => variable_get("dfsi_use_chunk",_DFSI_CHUNK_DATA_DISABLED),
+        );    
+    }
     
     $form['#submit'][] = 'dfsi_settings_form_submit';
     
@@ -150,34 +128,25 @@ function dfsi_settings_validate($form, &$form_state)
 }
 
 
-/*
-function dfsi_Export_settings_form_submit($form, &$form_state) 
-{    
-    $dfsi_choosed_mode = $form_state['values']['modeExport'];
-    //dpm($dfsi_choosed_mode);
-
-    variable_set("dfsi_Preferred_ExportMode", $dfsi_choosed_mode );
-
-}
-*/
 // -----------------
 // Hook_submit
 // -----------------
 function dfsi_settings_form_submit($form, &$form_state) 
 {    
-    variable_set("dfsi_use_chunk",$form['Données complémentaires']['dfsi_use_chunk']['#value']);
-    drupal_flush_all_caches();
-    cache_clear_all();
-    $msg = "Gestion des donnnées complémentaire ";
-    $msg .= dfsi_ComplementaryDataEnabled() ? "activée" : "désactivée";
-    dsm(t($msg) );
     
+    if( user_access(_DFSI_PERM_CHUK_DATA_ACTIVATION) )
+    {
+        variable_set("dfsi_use_chunk",$form['Données complémentaires']['dfsi_use_chunk']['#value']);
+        //drupal_flush_all_caches();
+        cache_clear_all();
+
+    }    
     module_load_include( _INCLUDE_EXTENSION , _MODULE_NAME , "dfsi.testData" );
 
     switch( $form_state['values']['dfsi_generate_test_data'] )
     {
-        case "0":        
-
+        case _DFSI_GENERATE_TESTDATA :      
+        case _DFSI_DELETE_TESTDATA :
             if  ( $form_state['clicked_button']['#id'] == "edit-executer"  )
             {
                 if( variable_get('dfsi_generate_test_data#Disabled',FALSE) == FALSE )
@@ -197,7 +166,7 @@ function dfsi_settings_form_submit($form, &$form_state)
             }    
          break;
     
-        case "1":   
+        case _DFSI_GENERATE_DO_NOTHING:   
         break;
     
         default:                
