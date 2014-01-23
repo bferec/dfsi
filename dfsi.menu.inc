@@ -34,6 +34,7 @@ function dfsi_menu()
             'file' => 'dfsi.details.inc',
             'weight' => 100,         
         );
+        /*
         $items['taxonomy/term/%taxonomy_term/Chunk/Add'] = array
         (   
             'title' => t("Ajouter un type de contenu de détail"),
@@ -45,6 +46,8 @@ function dfsi_menu()
             'file' => 'dfsi.details.inc',
 
         );
+
+         */
         $items['taxonomy/term/%taxonomy_term/Chunk/Edit'] = array
         (   
             'title' => t("Modifier"),

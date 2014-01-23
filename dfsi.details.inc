@@ -11,6 +11,22 @@ if( !defined("_INCLUDE_EXTENSION") ) { define( "_INCLUDE_EXTENSION" , "inc" ); }
 module_load_include( _INCLUDE_EXTENSION , _MODULE_NAME , "dfsi.define");
 module_load_include( _INCLUDE_EXTENSION , _MODULE_NAME , "dfsi.api");
 
+
+function dfsi_GetAddDetailContentTypeLink($vid,$tid,$taxonomyTermName) 
+{
+
+        $arguments = json_encode($arg);
+        
+        popup_forms_parent_js();
+        $js = "
+            (function($) {
+            $(document).ready(function() {
+            popupFormsFormShow('dfsi_DetailAddForm',null,{$arguments});
+            });
+            })(jQuery);
+        ";
+        drupal_add_js($js, 'inline');
+}
 // -------------------------------------------------
 // page d'association d'un type de contenu
 // pourles données supplémentaires liées
@@ -19,14 +35,33 @@ module_load_include( _INCLUDE_EXTENSION , _MODULE_NAME , "dfsi.api");
 function dfsi_ComplementDataTypePage($args)
 {
     $output="";
-    $type="";
     $did=-1;    
     
     //lecture du type de contenu spécifique à ce terme
     $type = dfsi_GetTermContentTypeRelation($did,$type,$args->vid,$args->tid);
     if($type == NULL)
     {
-        $output .= t("Il n'existe pas de type de contenu de données complémentaires pour ce terme");
+        if( user_access( _DFSI_PERM_ADD_CHUNK_DATA_TYPE))
+        {
+            $PopupArgs = json_encode
+            (
+                array
+                (
+                    'vid'=> $args->vid,
+                    'tid'=> $args->tid,            
+                    'taxonomyTermName' => $args->name
+                )
+            );
+            
+            $link = '<a href=\"javascript:';                       
+            $link .= "popupFormsFormShow('dfsi_DetailAddForm',null,{$PopupArgs})";
+            $link .= "\"";
+            $link .= t("Ajouter").">";
+            dpm($link);
+            $output .= $link;
+            $output .= "<br/>";
+            $output .= t("Il n'existe pas de type de contenu de données complémentaires pour ce terme");
+        }
     }
     else
     {
