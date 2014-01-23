@@ -11,9 +11,11 @@ if( !defined("_INCLUDE_EXTENSION") ) { define( "_INCLUDE_EXTENSION" , "inc" ); }
 module_load_include( _INCLUDE_EXTENSION , _MODULE_NAME , "dfsi.define");
 module_load_include( _INCLUDE_EXTENSION , _MODULE_NAME , "dfsi.api");
 
+// -------------------------------------------------
 // page d'association d'un type de contenu
 // pourles données supplémentaires liées
-// seuelement à un terme de taxonomie
+// seulement à un terme de taxonomie
+// -------------------------------------------------
 function dfsi_ComplementDataTypePage($args)
 {
     $output="";
