@@ -307,7 +307,7 @@ function dfsi_menu_local_tasks_alter (&$data, $router_item, $root_path )
         $did = -1;
         $type= '';
         // chargement de la relation si existante.
-        $relation = dfsi_GetTermContentTypeRelation
+        $relation = dfsi_ReadTermContentTypeRelation
                     (
                         $did,
                         $type,

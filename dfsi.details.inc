@@ -12,22 +12,22 @@ module_load_include( _INCLUDE_EXTENSION , _MODULE_NAME , "dfsi.define");
 module_load_include( _INCLUDE_EXTENSION , _MODULE_NAME , "dfsi.api");
 
 
-function dfsi_GetAddDetailContentTypeLink($vid,$tid,$taxonomyTermName) 
-{
-
-        $arguments = json_encode($arg);
-        
-        popup_forms_parent_js();
-        $js = "
-            (function($) {
-            $(document).ready(function() {
-            popupFormsFormShow('dfsi_DetailAddForm',null,{$arguments});
-            });
-            })(jQuery);
-        ";
-        drupal_add_js($js, 'inline');
-}
-// -------------------------------------------------
+//function dfsi_GetAddDetailContentTypeLink($vid,$tid,$taxonomyTermName) 
+//{
+//
+//        $arguments = json_encode($arg);
+//        
+//        popup_forms_parent_js();
+//        $js = "
+//            (function($) {
+//            $(document).ready(function() {
+//            popupFormsFormShow('dfsi_DetailAddForm',null,{$arguments});
+//            });
+//            })(jQuery);
+//        ";
+//        drupal_add_js($js, 'inline');
+//}
+//// -------------------------------------------------
 // page d'association d'un type de contenu
 // pourles données supplémentaires liées
 // seulement à un terme de taxonomie
@@ -38,11 +38,14 @@ function dfsi_ComplementDataTypePage($args)
     $did=-1;    
     
     //lecture du type de contenu spécifique à ce terme
-    $type = dfsi_GetTermContentTypeRelation($did,$type,$args->vid,$args->tid);
+    $type = dfsi_ReadTermContentTypeRelation($did,$type,$args->vid,$args->tid);
     if($type == NULL)
     {
+        popup_forms_parent_js();
+        
         if( user_access( _DFSI_PERM_ADD_CHUNK_DATA_TYPE))
         {
+            // parametres à passer à popupFormShow() en flux json
             $PopupArgs = json_encode
             (
                 array
@@ -52,18 +55,18 @@ function dfsi_ComplementDataTypePage($args)
                     'taxonomyTermName' => $args->name
                 )
             );
+            // simple quote au lieu de double
             $PopupArgs = str_replace ( '"' , "'" ,$PopupArgs );
+            
+            // appel javascript la fonction du module  popup_forms
             $url = "javascript:popupFormsFormShow('dfsi_DetailAddForm',null,{$PopupArgs});";   
             
-            popup_forms_parent_js();
-            
-            //$options = array('html' => TRUE, );
-            //$link = l(t("Ajouter"),$url, $options );
+            // creation du lien
             $link = '<a href="';
             $link .=  $url;
             $link .=  '">'.t("Ajouter").'</a>';
             
-            $output .= t("Il n'existe pas de type de contenu de données complémentaires pour ce terme");
+            $output .= t("Il n'existe pas de type de contenu de données complémentaires pour le terme ".$args->name);
             $output .= "<br/>";
             $output .= "<br/>";
             $output .= $link;
@@ -71,14 +74,15 @@ function dfsi_ComplementDataTypePage($args)
     }
     else
     {
-        $link = l($type,"/admin/structure/types/manage/");
+        $link = l($type,"admin/structure/types/manage/".$type);
         $output .= t("Type de contenu de données complémentaires existant pour ce terme : ").$link;
         
         $fields = field_info_instances("node",$type);
         $header = array( t('Nom du champ'), t('Etiquette'), t('Description'), t('Valeur par défaut'),t('Champ obligatoire') );
         $rows = array();        
         foreach( $fields as $fieldName => $field)
-        {            
+        {    
+            // troncature du champ description si trop long pour affichage
             $description = substr( $fields[$fieldName]['description'] , 0 , _DFSI_TRUNCATE_COMMENT_LENGTH );
             $description .= strlen( $fields[$fieldName]['description'] ) > _DFSI_TRUNCATE_COMMENT_LENGTH ? '[...]' : '';
             $item = array
@@ -110,8 +114,18 @@ function dfsi_DetailAddForm($form, &$form_state, $vid , $tid , $taxonomyTermName
     
     $form['arg'] = array
     (
-        '#type' => 'item',       
-        '#markup' => t("Le type de contenu [".$humanName."] (nom machine : [".$newContentTypeName."]) va être créé, pour le terme de taxonomie [".$taxonomyTermName."]"),
+        array
+        (
+            '#type' => 'item', '#markup' => t("Terme de taxonomie  : ").$taxonomyTermName,
+        ),        
+        array
+        (
+            '#type' => 'item', '#markup' => t("Nom machine : ").$vid.$tid."_".$taxonomyTermName,
+        ),
+        array
+        (
+         '#type' => 'item', '#markup' => t("Le type de contenu : ").$humanName,
+        )
     );
     $form['actions'] = array('#type' => 'actions');
     $form['actions']['submit'] = array
@@ -143,56 +157,11 @@ function dfsi_DetailAddForm_submit($form, &$form_state)
     // confirmation de creation du  type de contenu de detail
      if($form_state['values']['op'] == t('Enregistrer') )
      {
-         //dfsi_AddDetailRshp( $form['vid'] , $form['tid'] , $form['newContentTypeName']['#value'] );
-         //dfsi_createDetailContentType( $form['newContentTypeName']['#value'], $form['taxonomyTermName']['#value'] );
-         dsm("Le type de contenu ".$form['taxonomyTermName']['#value']."_detail à été créé...");
+         dfsi_AddDetailRshp( $form['vid']['#value'] , $form['tid']['#value'] , $form['newContentTypeName']['#value'] );
+         dfsi_createDetailContentType( $form['newContentTypeName']['#value'], $form['taxonomyTermName']['#value'] );
+         $path = drupal_get_path_alias(current_path());
+         drupal_goto($path);
      }
-}
-
-// -------------------------------------
-// creation du type de contenu de detail
-// et enregistrement dans la table
-// specifique dfsi mettant en relation
-// un terme de taxonomie
-// et un type de contenu complémentaire
-// -------------------------------------
-function dfsi_AddDetailComplementType($args)
-{
-    //dpm($args);
-    
-    /*
-    $PopupArgs = json_encode
-    (
-        array
-        (
-            'vid'=> $args->vid,
-            'tid'=> $args->tid,            
-            'taxonomyTermName' => $args->name
-        )
-    );
-    
-    popup_forms_parent_js();
-    
-
-      $js = "
-     
-        (function($) {
-        $(document).ready(function() {
-        popupFormsFormShow('dfsi_DetailAddForm',null,{$PopupArgs});
-        });
-        })(jQuery);
-    ";
-     */
-    
-    //drupal_add_js($js, 'inline');        
-    // nom du type = idvocabulaire+idterme + '_detail'
-    //$newContentTypeName = $args->vid .$args->tid ."_detail";
-    // nom lisible 
-    //$humanName = strtolower($args->name."_detail");        
-    //dfsi_AddDetailRshp($args->vid,$args->tid,$newContentTypeName);
-    //dfsi_createDetailContentType($newContentTypeName,$args->name);
-    //drupal_goto("admin/structure/types/manage/".$newContentTypeName);
-    
 }
 
 // -------------------------------
@@ -266,7 +235,7 @@ function dfsi_DeleteDetailRshp($vid,$tid)
 //  type de contenu de détail
 // et un terme de taxonomie
 // -------------------------------------
-function dfsi_GetTermContentTypeRelation(&$did,&$type,$vid,$tid)
+function dfsi_ReadTermContentTypeRelation(&$did,&$type,$vid,$tid)
 {
     $Sql  = "SELECT did,TYPE FROM  `"._DFSI_DETAIL_TABLE."` WHERE `vid`=".$vid." AND "."`tid`=".$tid.";";
     $relations = db_query($Sql);
@@ -279,8 +248,9 @@ function dfsi_GetTermContentTypeRelation(&$did,&$type,$vid,$tid)
     }  
     return $type;   
 }
-// teste la possibilité pour un noeud de definir des données
-// complémentaires pour un terme de taxonomie
+// --------------------------------------------
+// type de contenu de detail créé pour ce noeud ?
+// --------------------------------------------
 function dfsi_IsComplementaryDataEnabled( $node )
 {
     $language = field_language('node', $node, 'field_service_type', $langcode = NULL);
@@ -293,6 +263,10 @@ function dfsi_IsComplementaryDataEnabled( $node )
     return ($relation != NULL);
 }
 
+// --------------------------------------------
+// leture du type de contenu de détail  pour un
+// terme de taxonomie
+// --------------------------------------------
 function dfsi_GetTermRelationForContentType($typeMachineName)
 {
     $result = array();
