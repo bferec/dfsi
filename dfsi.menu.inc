@@ -40,7 +40,7 @@ function dfsi_menu()
             'type' => MENU_LOCAL_ACTION,
             'page callback' => 'dfsi_AddDetailComplementType',   
             'access callback' => true,
-            //'access arguments' => array(_DFSI_PERM_ADD_CHUNK_DATA_TYPE),
+            'access arguments' => array(_DFSI_PERM_ADD_CHUNK_DATA_TYPE),
             'page arguments' => array(2),
             'file' => 'dfsi.details.inc',
 

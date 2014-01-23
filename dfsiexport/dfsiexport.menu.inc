@@ -20,6 +20,5 @@ function dfsiexport_menu()
         'page arguments' => array('dfsiexport_admin_settings'),
         'file' => 'dfsiexport.admin.inc'
     );
-    dpm($items);
     return $items;
 }
