@@ -52,15 +52,21 @@ function dfsi_ComplementDataTypePage($args)
                     'taxonomyTermName' => $args->name
                 )
             );
+            $PopupArgs = str_replace ( '"' , "'" ,$PopupArgs );
+            $url = "javascript:popupFormsFormShow('dfsi_DetailAddForm',null,{$PopupArgs});";   
             
-            $link = '<a href=\"javascript:';                       
-            $link .= "popupFormsFormShow('dfsi_DetailAddForm',null,{$PopupArgs})";
-            $link .= "\"";
-            $link .= t("Ajouter").">";
-            dpm($link);
-            $output .= $link;
-            $output .= "<br/>";
+            popup_forms_parent_js();
+            
+            //$options = array('html' => TRUE, );
+            //$link = l(t("Ajouter"),$url, $options );
+            $link = '<a href="';
+            $link .=  $url;
+            $link .=  '">'.t("Ajouter").'</a>';
+            
             $output .= t("Il n'existe pas de type de contenu de données complémentaires pour ce terme");
+            $output .= "<br/>";
+            $output .= "<br/>";
+            $output .= $link;
         }
     }
     else
