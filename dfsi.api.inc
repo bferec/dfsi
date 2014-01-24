@@ -7,10 +7,10 @@
 // @(#) 17/01/2014
 // ------------------------------------------------
 
-if( !defined("_MODULE_NAME") ) { define( "_MODULE_NAME" , "dfsi" ); }                                               // nom du module
-if( !defined("_INCLUDE_EXTENSION") ) { define( "_INCLUDE_EXTENSION" , "inc" ); }                                    // extension pour les fichiers include php
+if( !defined("_DFSI_MODULE_NAME") ) { define( "_DFSI_MODULE_NAME" , "dfsi" ); }                                               // nom du module
+if( !defined("_DFSI_INCLUDE_EXTENSION") ) { define( "_DFSI_INCLUDE_EXTENSION" , "inc" ); }                                    // extension pour les fichiers include php
 
-module_load_include( _INCLUDE_EXTENSION , _MODULE_NAME , "dfsi.define");
+module_load_include( _DFSI_INCLUDE_EXTENSION , _DFSI_MODULE_NAME , "dfsi.define");
 
 // ------------------------------------------------------------------------------------------------------
 // dfsi Get() function  obtain item from element or list
@@ -97,7 +97,7 @@ function dfsi_GetAllContentOfNode( $node )
 
     foreach ($result as $oneNode )
     {
-       if(dfsi_GetTypeOf($oneNode) == _CONTAINER )
+       if(dfsi_GetTypeOf($oneNode) == _DFSI_CONTAINER )
        {
         $result += dfsi_GetAllContentOfNode( $oneNode );
        }
@@ -342,7 +342,7 @@ function dfsi_FindElementBy($mode, $value)
                          ) 
                  )
             -> condition( $field , $value , "=" )                
-            -> condition( 'type', array(_SERVICE,_CONTAINER) , "IN" )
+            -> condition( 'type', array(_DFSI_SERVICE,_DFSI_CONTAINER) , "IN" )
             
             -> execute()
             -> fetchAssoc() ; 
@@ -414,7 +414,7 @@ function dfsi_AddDependancies($nid,  $node )
 function dfsi_AddContent( $nid,  $node )
 {
     // is it a container ?
-    if( dfsi_GetTypeOf($node) == _CONTAINER )
+    if( dfsi_GetTypeOf($node) == _DFSI_CONTAINER )
     {
         $wrapper = entity_metadata_wrapper('node' , $node);
         if( ! dfsi_IsInContentOf( $nid, $node ) )
@@ -452,7 +452,7 @@ function dfsi_AddContainer( $title , $body , $statut , $criticity  , $language =
     
     $values = array
     (
-        'type' => _CONTAINER,
+        'type' => _DFSI_CONTAINER,
         'uid' => $user->uid,
         'status' => TRUE,
         'promote' => FALSE,
@@ -479,7 +479,7 @@ function dfsi_AddService( $title , $body , $statut , $criticity  , $language = L
     
     $values = array
     (
-        'type' => _SERVICE,'uid' => $user->uid,'status' => TRUE,'promote' => FALSE,'sticky' => FALSE,
+        'type' => _DFSI_SERVICE,'uid' => $user->uid,'status' => TRUE,'promote' => FALSE,'sticky' => FALSE,
     );
     $entity = entity_create('node', $values);
     $wrapper = entity_metadata_wrapper('node', $entity);

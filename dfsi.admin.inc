@@ -6,10 +6,10 @@
 // @(#) 17/01/2014
 // ------------------------------------------------
 
-if( !defined("_MODULE_NAME") ) { define( "_MODULE_NAME" , "dfsi" ); }                                               // nom du module
-if( !defined("_INCLUDE_EXTENSION") ) { define( "_INCLUDE_EXTENSION" , "inc" ); }                                    // extension pour les fichiers include php
+if( !defined("_DFSI_MODULE_NAME") ) { define( "_DFSI_MODULE_NAME" , "dfsi" ); }                                               // nom du module
+if( !defined("_DFSI_INCLUDE_EXTENSION") ) { define( "_DFSI_INCLUDE_EXTENSION" , "inc" ); }                                    // extension pour les fichiers include php
 
-module_load_include( _INCLUDE_EXTENSION , _MODULE_NAME , "dfsi.define");
+module_load_include( _DFSI_INCLUDE_EXTENSION , _DFSI_MODULE_NAME , "dfsi.define");
 
  
 function dfsi_settings() 
@@ -141,7 +141,7 @@ function dfsi_settings_form_submit($form, &$form_state)
         cache_clear_all();
 
     }    
-    module_load_include( _INCLUDE_EXTENSION , _MODULE_NAME , "dfsi.testData" );
+    module_load_include( _DFSI_INCLUDE_EXTENSION , _DFSI_MODULE_NAME , "dfsi.testData" );
 
     switch( $form_state['values']['dfsi_generate_test_data'] )
     {

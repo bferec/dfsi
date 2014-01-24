@@ -6,13 +6,13 @@
 // @(#) 17/01/2014
 // ------------------------------------------------
 
-if( !defined("_MODULE_NAME") ) { define( "_MODULE_NAME" , "dfsi" ); }                                               // nom du module
+if( !defined("_DFSI_MODULE_NAME") ) { define( "_DFSI_MODULE_NAME" , "dfsi" ); }                                               // nom du module
 if( !defined("_MODULE_COMMERCIAL_NAME") ) { define( "_MODULE_COMMERCIAL_NAME" , "D.f.s.i." ); }                         // nom commercial du module
 
-if( !defined("_SERVICE") ) { define( "_SERVICE" , "itservice" ); }                                                  // nom de type d'element service
-if( !defined("_CONTAINER") ) { define( "_CONTAINER" , "itcontainer" ); }                                            // nom de type d'element container
+if( !defined("_DFSI_SERVICE") ) { define( "_DFSI_SERVICE" , "itservice" ); }                                                  // nom de type d'element service
+if( !defined("_DFSI_CONTAINER") ) { define( "_DFSI_CONTAINER" , "itcontainer" ); }                                            // nom de type d'element container
 
-if( !defined("_INCLUDE_EXTENSION") ) { define( "_INCLUDE_EXTENSION" , "inc" ); }                                    // extension pour les fichiers include php
+if( !defined("_DFSI_INCLUDE_EXTENSION") ) { define( "_DFSI_INCLUDE_EXTENSION" , "inc" ); }                                    // extension pour les fichiers include php
 
 if( !defined("_DFSI_STATE_TABLE") ) { define( "_DFSI_STATE_TABLE" , "dfsi_states" ); }                              // en prevision V2 etats multiples
 if( !defined("_DFSI_STATE_GROUP_TABLE") ) { define( "_DFSI_STATE_GROUP_TABLE" , "dfsi_states_groups" ); }           // en prevision V2 etats multiples
@@ -25,8 +25,8 @@ if( !defined("_DFSI_WARNING_STATE") ) { define( "_DFSI_WARNING_STATE" , "Warning
 if( !defined("_DFSI_ERROR_STATE") ) { define( "_DFSI_ERROR_STATE" , "Error" ); }
 
 if( !defined("_DFSI_ERROR_MSG") ) { define( "_DFSI_ERROR_MSG" , "dfs_error_msg" ); }                                // texte message erreur dfs
-if( !defined("_DFSI__NODIRECTDEP_SEARCH") ) { define( "_DFSI__NODIRECTDEP_SEARCH" , 0 ); }                          // recherche noeud sans dependances directes
-if( !defined("_DFSI__NOGROUPDEP_SEARCH") ) { define( "_DFSI__NOGROUPDEP_SEARCH" , 1 ); }                            // recherche noeud sans dependances de groupe
+if( !defined("_DFSI_NODIRECTDEP_SEARCH") ) { define( "_DFSI_NODIRECTDEP_SEARCH" , 0 ); }                          // recherche noeud sans dependances directes
+if( !defined("_DFSI_NOGROUPDEP_SEARCH") ) { define( "_DFSI_NOGROUPDEP_SEARCH" , 1 ); }                            // recherche noeud sans dependances de groupe
 if( !defined("_DFSI__NODEP_SEARCH") ) { define( "_DFSI__NODEP_SEARCH" , 2 ); }                                      // recherche noeud sans aucune dependances 
 if( !defined("_DFSI_TITLE") ) { define( "_DFSI_TITLE" , "title" ); }                                                // nom du champ title
 if( !defined("_DFSI_NID") ) { define( "_DFSI_NID" , "nid" ); }                                                      // nom du champ node id (nid)
@@ -47,15 +47,15 @@ if( !defined("_DFSI_PERM_CHANGE_NODE_STATUT") ) { define( "_DFSI_PERM_CHANGE_NOD
 
 if( !defined("_DFSI_PERM_CHUK_DATA_ACTIVATION") ) { define( "_DFSI_PERM_CHUK_DATA_ACTIVATION" , "dfsi: chunk data activation" ); }
 
-if( !defined("_DFSI_PERM_VIEW_SERVICE") ) { define( "_DFSI_PERM_VIEW_SERVICE" , "dfsi: view service" ); }
-if( !defined("_DFSI_PERM_CREATE_SERVICE") ) { define( "_DFSI_PERM_CREATE_SERVICE" , "dfsi: create service" ); }
-if( !defined("_DFSI_PERM_UPDATE_SERVICE") ) { define( "_DFSI_PERM_UPDATE_SERVICE" , "dfsi: update service" ); }
-if( !defined("_DFSI_PERM_DELETE_SERVICE") ) { define( "_DFSI_PERM_DELETE_SERVICE" , "dfsi: delete service" ); }
+if( !defined("_DFSI_PERM_VIEW_DFSI_SERVICE") ) { define( "_DFSI_PERM_VIEW_DFSI_SERVICE" , "dfsi: view service" ); }
+if( !defined("_DFSI_PERM_CREATE_DFSI_SERVICE") ) { define( "_DFSI_PERM_CREATE_DFSI_SERVICE" , "dfsi: create service" ); }
+if( !defined("_DFSI_PERM_UPDATE_DFSI_SERVICE") ) { define( "_DFSI_PERM_UPDATE_DFSI_SERVICE" , "dfsi: update service" ); }
+if( !defined("_DFSI_PERM_DELETE_DFSI_SERVICE") ) { define( "_DFSI_PERM_DELETE_DFSI_SERVICE" , "dfsi: delete service" ); }
 
-if( !defined("_DFSI_PERM_VIEW_CONTAINER") ) { define( "_DFSI_PERM_VIEW_CONTAINER" , "dfsi: view container" ); }
-if( !defined("_DFSI_PERM_CREATE_CONTAINER") ) { define( "_DFSI_PERM_CREATE_CONTAINER" , "dfsi: create container" ); }
-if( !defined("_DFSI_PERM_UPDATE_CONTAINER") ) { define( "_DFSI_PERM_UPDATE_CONTAINER" , "dfsi: update container" ); }
-if( !defined("_DFSI_PERM_DELETE_CONTAINER") ) { define( "_DFSI_PERM_DELETE_CONTAINER" , "dfsi: delete container" ); }
+if( !defined("_DFSI_PERM_VIEW_DFSI_CONTAINER") ) { define( "_DFSI_PERM_VIEW_DFSI_CONTAINER" , "dfsi: view container" ); }
+if( !defined("_DFSI_PERM_CREATE_DFSI_CONTAINER") ) { define( "_DFSI_PERM_CREATE_DFSI_CONTAINER" , "dfsi: create container" ); }
+if( !defined("_DFSI_PERM_UPDATE_DFSI_CONTAINER") ) { define( "_DFSI_PERM_UPDATE_DFSI_CONTAINER" , "dfsi: update container" ); }
+if( !defined("_DFSI_PERM_DELETE_DFSI_CONTAINER") ) { define( "_DFSI_PERM_DELETE_DFSI_CONTAINER" , "dfsi: delete container" ); }
 
 if( !defined("_DFSI_PERM_ADD_CHUNK_DATA_TYPE") ) { define( "_DFSI_PERM_ADD_CHUNK_DATA_TYPE" , "dfsi: add chunk data type" ); }
 if( !defined("_DFSI_PERM_UPDATE_CHUNK_DATA_TYPE") ) { define( "_DFSI_PERM_UPDATE_CHUNK_DATA_TYPE" , "dfsi: update chunk data type" ); }

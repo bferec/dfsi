@@ -11,6 +11,4 @@ cd $dest
 chown root:root *
 find . -type d -exec chmod a+rx {} \;
 find . -exec chmod a+r {} \;
-
-chown root:root dfsiexport/*
 find ./dfsiexport -exec chmod a+r {} \;

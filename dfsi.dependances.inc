@@ -6,11 +6,11 @@
 // @(#) 17/01/2014
 // ------------------------------------------------
 
-if( !defined("_MODULE_NAME") ) { define( "_MODULE_NAME" , "dfsi" ); }                                               // nom du module
-if( !defined("_INCLUDE_EXTENSION") ) { define( "_INCLUDE_EXTENSION" , "inc" ); }                                    // extension pour les fichiers include php
+if( !defined("_DFSI_MODULE_NAME") ) { define( "_DFSI_MODULE_NAME" , "dfsi" ); }                                               // nom du module
+if( !defined("_DFSI_INCLUDE_EXTENSION") ) { define( "_DFSI_INCLUDE_EXTENSION" , "inc" ); }                                    // extension pour les fichiers include php
 
-module_load_include( _INCLUDE_EXTENSION , _MODULE_NAME , "dfsi.define");
-module_load_include( _INCLUDE_EXTENSION , _MODULE_NAME , "dfsi.api");
+module_load_include( _DFSI_INCLUDE_EXTENSION , _DFSI_MODULE_NAME , "dfsi.define");
+module_load_include( _DFSI_INCLUDE_EXTENSION , _DFSI_MODULE_NAME , "dfsi.api");
 
 // recherche 
 // -----------------------------------------
@@ -141,7 +141,7 @@ function dfsi_FindElementsWithoutDependances($mode)
     switch( $mode  )
     {
         
-        case _DFSI__NODIRECTDEP_SEARCH:
+        case _DFSI_NODIRECTDEP_SEARCH:
             $table = "field_data_field_ancestor";
             $havingDependances = db_select(  $table  , "d" )
             ->   fields
@@ -154,7 +154,7 @@ function dfsi_FindElementsWithoutDependances($mode)
                  )            
             -> execute();
         break;
-        case _DFSI__NOGROUPDEP_SEARCH:
+        case _DFSI_NOGROUPDEP_SEARCH:
             $table = "field_data_field_groupe_de_dependances" ;
             $havingDependances = db_select(  $table  , "d" )
             ->   fields
@@ -201,7 +201,7 @@ function dfsi_FindElementsWithoutDependances($mode)
                     "nid", 
                 ) 
              )
-        -> condition( 'type', array(_SERVICE,_CONTAINER) , "IN" )
+        -> condition( 'type', array(_DFSI_SERVICE,_DFSI_CONTAINER) , "IN" )
         -> condition ( 'nid' , $havingDependancesNids  , "NOT IN")
         -> execute();
     }
@@ -216,7 +216,7 @@ function dfsi_FindElementsWithoutDependances($mode)
                     "nid", 
                 ) 
              )
-        -> condition( 'type', array(_SERVICE,_CONTAINER) , "IN" )
+        -> condition( 'type', array(_DFSI_SERVICE,_DFSI_CONTAINER) , "IN" )
         -> execute();        
     }
     
@@ -249,7 +249,7 @@ function dfsi_RenderTableFromList($tableTitle, $header,$entries)
             (
                 dfsi_GetNidOf($entry),
                 $link,
-                dfsi_GetTypeOf($entry) == _SERVICE ? t("Service") : t("Container"),
+                dfsi_GetTypeOf($entry) == _DFSI_SERVICE ? t("Service") : t("Container"),
                 dfsi_GetImgOfStatut( dfsi_GetStatutOf( $entry ) )
             );
             $rows[] = $item;
@@ -273,8 +273,8 @@ function dfsi_RenderTableFromList($tableTitle, $header,$entries)
 function dfsi_NoDependantList() 
 {
     $entriesNoDep = dfsi_FindElementsWithoutDependances(_DFSI__NODEP_SEARCH);
-    $entriesNoDirectDep=dfsi_FindElementsWithoutDependances(_DFSI__NODIRECTDEP_SEARCH);
-    $entriesNoGroupDep=dfsi_FindElementsWithoutDependances(_DFSI__NOGROUPDEP_SEARCH);          
+    $entriesNoDirectDep=dfsi_FindElementsWithoutDependances(_DFSI_NODIRECTDEP_SEARCH);
+    $entriesNoGroupDep=dfsi_FindElementsWithoutDependances(_DFSI_NOGROUPDEP_SEARCH);          
     
     $header = array( t('Identifiant'), t('Titre'), t('Type'), t('Statut') );
     $output = array

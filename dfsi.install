@@ -6,11 +6,11 @@
 // @(#) 17/01/2014
 // ------------------------------------------------
 
-if( !defined("_MODULE_NAME") ) { define( "_MODULE_NAME" , "dfsi" ); }                                               // nom du module
-if( !defined("_INCLUDE_EXTENSION") ) { define( "_INCLUDE_EXTENSION" , "inc" ); }                                    // extension pour les fichiers include php
+if( !defined("_DFSI_MODULE_NAME") ) { define( "_DFSI_MODULE_NAME" , "dfsi" ); }                                               // nom du module
+if( !defined("_DFSI_INCLUDE_EXTENSION") ) { define( "_DFSI_INCLUDE_EXTENSION" , "inc" ); }                                    // extension pour les fichiers include php
 
 
-module_load_include( _INCLUDE_EXTENSION , _MODULE_NAME , "dfsi.define");
+module_load_include( _DFSI_INCLUDE_EXTENSION , _DFSI_MODULE_NAME , "dfsi.define");
 
 
 // --------------------------------
@@ -53,6 +53,8 @@ function dfsi_Create_variables()
     variable_set('dfsi_ok_icon', "green_button.png");
     variable_set('dfsi_warning_icon', "orange_button.png");
     variable_set('dfsi_error_icon', "red_button.png");
+    variable_set('dfsi_Service_TestList',array());
+    variable_set('dfsi_Container_TestList',array());
 }
 
 // --------------------------------------------------
@@ -82,8 +84,8 @@ function dfsi_install()
 	$machineName = "itcomputercompany";
 	$description =  "Editeurs et constructeurs informatique à l'origine du service";
         
-        module_load_include( _INCLUDE_EXTENSION , _MODULE_NAME , "dfsi.itcomputercompany.taxonomy");
-	dfsi_Create_Taxonomy( $taxonomyName , $machineName , $description ,_MODULE_NAME);
+        module_load_include( _DFSI_INCLUDE_EXTENSION , _DFSI_MODULE_NAME , "dfsi.itcomputercompany.taxonomy");
+	dfsi_Create_Taxonomy( $taxonomyName , $machineName , $description ,_DFSI_MODULE_NAME);
         // -----------------------------------
 	// Taxonomy itcomputercompany : termes
 	// -----------------------------------
@@ -95,8 +97,8 @@ function dfsi_install()
 	$taxonomyName = "Types de service";
 	$machineName =  "itservicetypes";
 	$description = "Catégories arborescentes de services composants le système d'information";
-        module_load_include( "inc" , _MODULE_NAME , "dfsi.itservicetypes.taxonomy");
-	dfsi_Create_Taxonomy( $taxonomyName , $machineName , $description , _MODULE_NAME );
+        module_load_include( "inc" , _DFSI_MODULE_NAME , "dfsi.itservicetypes.taxonomy");
+	dfsi_Create_Taxonomy( $taxonomyName , $machineName , $description , _DFSI_MODULE_NAME );
      
         // -----------------------------------
 	// Taxonomy itservicetypes : termes
@@ -110,10 +112,10 @@ function dfsi_install()
 	$humanName = "service";
 	$title = "Service";
 	$description = "Service composant le système d'information, proposé aux utilisateurs ou utilisé par d'autres services";
-        module_load_include( "inc" , _MODULE_NAME , "dfsi.service.fields" );
-	dfsi_Create_ContentType( _SERVICE, $humanName , $title , $description) ;
-	dfsi_Create_itservice_Fields( _SERVICE );
-	dfsi_Create_itservice_Fields_Instances( _SERVICE ); 
+        module_load_include( _DFSI_INCLUDE_EXTENSION , _DFSI_MODULE_NAME , "dfsi.service.fields" );
+	dfsi_Create_ContentType( _DFSI_SERVICE, $humanName , $title , $description) ;
+	dfsi_Create_itservice_Fields( _DFSI_SERVICE );
+	dfsi_Create_itservice_Fields_Instances( _DFSI_SERVICE ); 
 	//
 	// ------------------------------
 	// content type :  itcontainer
@@ -122,10 +124,10 @@ function dfsi_install()
 	$humanName = "container";
 	$title = "container";
 	$description = "Container de services ou de sous containers";
-        module_load_include( _INCLUDE_EXTENSION , _MODULE_NAME , "dfsi.container.fields" );
-	dfsi_Create_ContentType(_CONTAINER, $humanName , $title , $description) ;
-	dfsi_Create_itcontainer_Fields( _CONTAINER );
-	dfsi_Create_itcontainer_Fields_Instances(_CONTAINER );
+        module_load_include( _DFSI_INCLUDE_EXTENSION , _DFSI_MODULE_NAME , "dfsi.container.fields" );
+	dfsi_Create_ContentType(_DFSI_CONTAINER, $humanName , $title , $description) ;
+	dfsi_Create_itcontainer_Fields( _DFSI_CONTAINER );
+	dfsi_Create_itcontainer_Fields_Instances(_DFSI_CONTAINER );
 	//
 
 	//
@@ -135,12 +137,12 @@ function dfsi_install()
 	// ces champs seront partagées 
 	// par les types de contenu itservice et itcontainer
 	// -------------------------------------------------
-        module_load_include( _INCLUDE_EXTENSION , _MODULE_NAME , "dfsi.common.fields" );
+        module_load_include( _DFSI_INCLUDE_EXTENSION , _DFSI_MODULE_NAME , "dfsi.common.fields" );
        
-        dfsi_Create_Common_Fields( _SERVICE );
+        dfsi_Create_Common_Fields( _DFSI_SERVICE );
 	//
-        dfsi_Create_Common_Fields_Instances(_SERVICE );
-        dfsi_Create_Common_Fields_Instances(_CONTAINER );
+        dfsi_Create_Common_Fields_Instances(_DFSI_SERVICE );
+        dfsi_Create_Common_Fields_Instances(_DFSI_CONTAINER );
 	
 }
 //
@@ -190,7 +192,7 @@ function dfsi_uninstall()
 	// Suppression des instances 
 	// de champs 
 	// ----------------------------------
-	dfsi_Delete_Fields_Instances(_CONTAINER);
+	dfsi_Delete_Fields_Instances(_DFSI_CONTAINER);
 	// -----------------------------------------------
 	// Suppression du type de contenu itservice
 	// -----------------------------------------------
@@ -201,7 +203,7 @@ function dfsi_uninstall()
 	// Suppression des instances 
 	// de champs 
 	// ----------------------------------
-	dfsi_Delete_Fields_Instances(_SERVICE);
+	dfsi_Delete_Fields_Instances(_DFSI_SERVICE);
 	// -----------------------------------------------
 	// Suppression du type de contenu itservice
 	// -----------------------------------------------
@@ -263,7 +265,7 @@ function dfsi_Create_ContentType( $typeName , $humanName , $title , $description
 	// ---------------------
 	// Ajouter le champ body
 	// ---------------------
-	node_add_body_field( $ContentType, 'Description' );
+	node_add_body_field( $ContentType, 'description' );
 	//
 	//
 	// ------------------------------

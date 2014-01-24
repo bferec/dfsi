@@ -6,19 +6,19 @@
 // @(#) 17/01/2014
 // ------------------------------------------------
 
-if( !defined("_MODULE_NAME") ) { define( "_MODULE_NAME" , "dfsi" ); }                 // nom du module
-if( !defined("_INCLUDE_EXTENSION") ) { define( "_INCLUDE_EXTENSION" , "inc" ); }      // extension pour les fichiers include php
+if( !defined("_DFSI_MODULE_NAME") ) { define( "_DFSI_MODULE_NAME" , "dfsi" ); }                 // nom du module
+if( !defined("_DFSI_INCLUDE_EXTENSION") ) { define( "_DFSI_INCLUDE_EXTENSION" , "inc" ); }      // extension pour les fichiers include php
 
-module_load_include( _INCLUDE_EXTENSION , _MODULE_NAME , "dfsi.define");
-module_load_include( _INCLUDE_EXTENSION , _MODULE_NAME , "dfsi.api");
-module_load_include( _INCLUDE_EXTENSION , _MODULE_NAME , "dfsi.dependances");
-module_load_include( _INCLUDE_EXTENSION , _MODULE_NAME , "dfsi.container");
-module_load_include( _INCLUDE_EXTENSION , _MODULE_NAME , "dfsi.form");
-module_load_include( _INCLUDE_EXTENSION , _MODULE_NAME , "dfsi.views");
-module_load_include( _INCLUDE_EXTENSION , _MODULE_NAME , "dfsi.statut");
-module_load_include( _INCLUDE_EXTENSION , _MODULE_NAME , "dfsi.permissions");
-module_load_include( _INCLUDE_EXTENSION , _MODULE_NAME , "dfsi.menu");
-module_load_include( _INCLUDE_EXTENSION , _MODULE_NAME , "dfsi.details");
+module_load_include( _DFSI_INCLUDE_EXTENSION , _DFSI_MODULE_NAME , "dfsi.define");
+module_load_include( _DFSI_INCLUDE_EXTENSION , _DFSI_MODULE_NAME , "dfsi.api");
+module_load_include( _DFSI_INCLUDE_EXTENSION , _DFSI_MODULE_NAME , "dfsi.dependances");
+module_load_include( _DFSI_INCLUDE_EXTENSION , _DFSI_MODULE_NAME , "dfsi.container");
+module_load_include( _DFSI_INCLUDE_EXTENSION , _DFSI_MODULE_NAME , "dfsi.form");
+module_load_include( _DFSI_INCLUDE_EXTENSION , _DFSI_MODULE_NAME , "dfsi.views");
+module_load_include( _DFSI_INCLUDE_EXTENSION , _DFSI_MODULE_NAME , "dfsi.statut");
+module_load_include( _DFSI_INCLUDE_EXTENSION , _DFSI_MODULE_NAME , "dfsi.permissions");
+module_load_include( _DFSI_INCLUDE_EXTENSION , _DFSI_MODULE_NAME , "dfsi.menu");
+module_load_include( _DFSI_INCLUDE_EXTENSION , _DFSI_MODULE_NAME , "dfsi.details");
 
 // ----------------------------
 // validation titre unique
@@ -39,7 +39,7 @@ function dfsi_validate_title( $node , $form , $form_state  )
 function dfsi_node_validate( $node , $form , $form_state  ) 
 {
     // Si le noeud est un service ou un container
-    if ( dfsi_GetTypeOf( $node ) == _SERVICE || dfsi_GetTypeOf( $node ) == _CONTAINER ) 
+    if ( dfsi_GetTypeOf( $node ) == _DFSI_SERVICE || dfsi_GetTypeOf( $node ) == _DFSI_CONTAINER ) 
     {
         
         dfsi_validate_title($node , $form , $form_state  );
@@ -48,10 +48,10 @@ function dfsi_node_validate( $node , $form , $form_state  )
 
     }     
     // Si le noeud est un container
-    if (  dfsi_GetTypeOf( $node ) == _CONTAINER ) 
+    if (  dfsi_GetTypeOf( $node ) == _DFSI_CONTAINER ) 
     {
         // validation des contenus
-        dfsi_validate_Container($node , $form , $form_state  );
+        dfsi_validate_DFSI_CONTAINER($node , $form , $form_state  );
     }
 }
 
@@ -64,7 +64,7 @@ function dfsi_node_validate( $node , $form , $form_state  )
 function dfsi_node_presave( $node ) 
 {
     // Si le noeud est un service ou un container
-    if ( ( dfsi_GetTypeOf( $node )  == _SERVICE || dfsi_GetTypeOf( $node ) == _CONTAINER ) && variable_get('dfsi_sem_Update', false) != true  )
+    if ( ( dfsi_GetTypeOf( $node )  == _DFSI_SERVICE || dfsi_GetTypeOf( $node ) == _DFSI_CONTAINER ) && variable_get('dfsi_sem_Update', false) != true  )
     {
         
         variable_set('dfsi_sem_Update', true);
@@ -92,7 +92,7 @@ function dfsi_node_submit( $node )
     // Si le noeud est un container
     // tout element contenu devient dependant de
     // son container    
-    if ( dfsi_GetTypeOf( $node ) == _CONTAINER )         
+    if ( dfsi_GetTypeOf( $node ) == _DFSI_CONTAINER )         
     {   
         // pour tous les id de contenu
         $contentNodesIds = dfsi_GetContentOf( $node );        
@@ -280,7 +280,7 @@ function dfsi_node_access($node, $op, $account)
         return NODE_ACCESS_IGNORE;
     }
     
-    if( $type == _SERVICE )
+    if( $type == _DFSI_SERVICE )
     {
         switch ($op)  
         {
@@ -310,7 +310,7 @@ function dfsi_node_access($node, $op, $account)
             break;
         }
     }
-    if( $type == _CONTAINER )
+    if( $type == _DFSI_CONTAINER )
     {
         switch ($op)  
         {
@@ -351,7 +351,7 @@ function dfsi_node_access($node, $op, $account)
 // ---------------
 function dfsi_node_view($node, $view_mode) 
 {
-    if(  dfsi_GetTypeOf($node) == _CONTAINER || dfsi_GetTypeOf($node) == _SERVICE)
+    if(  dfsi_GetTypeOf($node) == _DFSI_CONTAINER || dfsi_GetTypeOf($node) == _DFSI_SERVICE)
     {
         // affichage identifiant (node id)
         $node->content['nid'] =
@@ -363,7 +363,7 @@ function dfsi_node_view($node, $view_mode)
         hide($node->content['field_ancestor']);
         hide($node->content['field_dependances']);
         hide($node->content['field_groupe_de_dependances']);
-        if(dfsi_GetTypeOf($node) == _CONTAINER )
+        if(dfsi_GetTypeOf($node) == _DFSI_CONTAINER )
         {
             hide($node->content['field_contenu']);
         }
@@ -438,7 +438,7 @@ function dfsi_popup_forms_data()
                 'taxonomyTermName'=> 'taxonomyTermName'
             ),
             'close_buttons' => array('op'),
-            'file' => drupal_get_path('module', _MODULE_NAME)  . '/dfsi.details.inc',
+            'file' => drupal_get_path('module', _DFSI_MODULE_NAME)  . '/dfsi.details.inc',
             'autopage' => TRUE,
         ),
     );

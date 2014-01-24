@@ -6,11 +6,11 @@
 // @(#) 17/01/2014
 // ------------------------------------------------
 
-if( !defined("_MODULE_NAME") ) { define( "_MODULE_NAME" , "dfsi" ); }                      // nom du module
-if( !defined("_INCLUDE_EXTENSION") ) { define( "_INCLUDE_EXTENSION" , "inc" ); }           // extension pour les fichiers include php
+if( !defined("_DFSI_MODULE_NAME") ) { define( "_DFSI_MODULE_NAME" , "dfsi" ); }                      // nom du module
+if( !defined("_DFSI_INCLUDE_EXTENSION") ) { define( "_DFSI_INCLUDE_EXTENSION" , "inc" ); }           // extension pour les fichiers include php
 
-module_load_include( _INCLUDE_EXTENSION , _MODULE_NAME , "dfsi.api");
-module_load_include( _INCLUDE_EXTENSION , _MODULE_NAME , "dfsi.details");
+module_load_include( _DFSI_INCLUDE_EXTENSION , _DFSI_MODULE_NAME , "dfsi.api");
+module_load_include( _DFSI_INCLUDE_EXTENSION , _DFSI_MODULE_NAME , "dfsi.details");
 // ----------------------------------------------------------
 // Hook_menu
 // ----------------------------------------------------------
@@ -277,7 +277,7 @@ function dfsi_menu_local_tasks_alter (&$data, $router_item, $root_path )
         $node = $router_item['page_arguments'][0];
          //
         // container ou service ? modifier les menus localtask
-        if( dfsi_GetTypeOf( $node ) == _CONTAINER || dfsi_GetTypeOf( $node ) == _SERVICE )
+        if( dfsi_GetTypeOf( $node ) == _DFSI_CONTAINER || dfsi_GetTypeOf( $node ) == _DFSI_SERVICE )
         {
             // afficher le sous menu de gestion des noeuds 
             // seulement en visualisation  de container ou service         
@@ -296,7 +296,7 @@ function dfsi_menu_local_tasks_alter (&$data, $router_item, $root_path )
         }
         // retirer l'onglet de contenu pour tout 
         // ce qui n'est pas un container
-        if(dfsi_GetTypeOf( $node ) != _CONTAINER )
+        if(dfsi_GetTypeOf( $node ) != _DFSI_CONTAINER )
         {
             dfsi_RemoveMenuItem( MENU_LOCAL_TASK , $data, 'node/%/Contient' );
         }

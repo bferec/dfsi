@@ -6,12 +6,12 @@
 // @(#) 17/01/2014
 // ------------------------------------------------
 
-if( !defined("_MODULE_NAME") ) { define( "_MODULE_NAME" , "dfsi" ); }                                               // nom du module
-if( !defined("_INCLUDE_EXTENSION") ) { define( "_INCLUDE_EXTENSION" , "inc" ); }                                    // extension pour les fichiers include php
+if( !defined("_DFSI_MODULE_NAME") ) { define( "_DFSI_MODULE_NAME" , "dfsi" ); }                                               // nom du module
+if( !defined("_DFSI_INCLUDE_EXTENSION") ) { define( "_DFSI_INCLUDE_EXTENSION" , "inc" ); }                                    // extension pour les fichiers include php
 
 
-module_load_include( _INCLUDE_EXTENSION , _MODULE_NAME , "dfsi.define");
-module_load_include( _INCLUDE_EXTENSION , _MODULE_NAME , "dfsi.api");
+module_load_include( _DFSI_INCLUDE_EXTENSION , _DFSI_MODULE_NAME , "dfsi.define");
+module_load_include( _DFSI_INCLUDE_EXTENSION , _DFSI_MODULE_NAME , "dfsi.api");
 
 
 // ------------------------------------------
@@ -21,7 +21,7 @@ function dfsi_Delete_Test_Data()
 {
    variable_set('dfsi_sem_Update', true);
    
-   $testContainersNids = variable_get( 'dfsi_Containers_TestList' , array() );
+   $testContainersNids = variable_get( 'dfsi_Container_TestList' , array() );
    $testServicesNids = variable_get( 'dfsi_Service_TestList' , array() );
    
    node_delete_multiple($testContainersNids);
@@ -80,7 +80,7 @@ function dfsi_create_Test_Data()
     // -----------------------------
     dfsi_create_dependance_Data( $testContainersNids , $testServicesNids );
    
-    variable_set( 'dfsi_Containers_TestList' , $testContainersNids );
+    variable_set( 'dfsi_Container_TestList' , $testContainersNids );
     variable_set( 'dfsi_Service_TestList' , $testServicesNids );
    
     variable_set('dfsi_sem_Update', false);

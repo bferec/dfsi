@@ -5,10 +5,10 @@
 // @(#) 11/12/2013
 // ------------------------------------------------
 
-if( !defined("_MODULE_NAME") ) { define( "_MODULE_NAME" , "dfsi" ); }                                               // nom du module
-if( !defined("_INCLUDE_EXTENSION") ) { define( "_INCLUDE_EXTENSION" , "inc" ); }                                    // extension pour les fichiers include php
+if( !defined("_DFSI_MODULE_NAME") ) { define( "_DFSI_MODULE_NAME" , "dfsi" ); }                                               // nom du module
+if( !defined("_DFSI_INCLUDE_EXTENSION") ) { define( "_DFSI_INCLUDE_EXTENSION" , "inc" ); }                                    // extension pour les fichiers include php
 
-module_load_include( _INCLUDE_EXTENSION , _MODULE_NAME , "dfsi.define");
+module_load_include( _DFSI_INCLUDE_EXTENSION , _DFSI_MODULE_NAME , "dfsi.define");
 
 // ------------------------------------------
 // modification formulaire edition service
@@ -84,7 +84,7 @@ function dfsi_RemoveSelfFromDependanciesChoice(&$form)
     $language = $form['field_dependances']['#language'];
     unset($form['field_dependances'][$language]['#options'][dfsi_GetNidOf($node)]);  
 
-    if( dfsi_GetTypeOf($node) == _CONTAINER )
+    if( dfsi_GetTypeOf($node) == _DFSI_CONTAINER )
     {
         $language = $form['field_contenu']['#language'];
         unset($form['field_contenu'][$language]['#options'][dfsi_GetNidOf($node)]);
@@ -115,7 +115,7 @@ function dfsi_RemoveAncestorsFromDependanciesChoice(&$form)
                 //$language = $form['field_dependances']['#language'];
                 unset($form['field_dependances'][$language]['#options'][$key]);
 
-                if( dfsi_GetTypeOf($node) == _CONTAINER )
+                if( dfsi_GetTypeOf($node) == _DFSI_CONTAINER )
                 {                
                     $language = $form['field_contenu']['#language'];
                     unset($form['field_contenu'][$language]['#options'][$key]);

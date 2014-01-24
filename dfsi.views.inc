@@ -6,10 +6,10 @@
 // @(#) 17/01/2014
 // ------------------------------------------------
 
-if( !defined("_MODULE_NAME") ) { define( "_MODULE_NAME" , "dfsi" ); }                                               // nom du module
-if( !defined("_INCLUDE_EXTENSION") ) { define( "_INCLUDE_EXTENSION" , "inc" ); }                                    // extension pour les fichiers include php
+if( !defined("_DFSI_MODULE_NAME") ) { define( "_DFSI_MODULE_NAME" , "dfsi" ); }                                               // nom du module
+if( !defined("_DFSI_INCLUDE_EXTENSION") ) { define( "_DFSI_INCLUDE_EXTENSION" , "inc" ); }                                    // extension pour les fichiers include php
 
-module_load_include( _INCLUDE_EXTENSION , _MODULE_NAME , "dfsi.define");
+module_load_include( _DFSI_INCLUDE_EXTENSION , _DFSI_MODULE_NAME , "dfsi.define");
 
 
 // ------------------------------------------
@@ -93,7 +93,7 @@ function render($values)
         (
             'name' => t('Edit'),
             'url' => 'node/' . $values->nid . '/edit',
-            'icon' => theme('image', array('path' => drupal_get_path('module',_MODULE_NAME) . '/pic/edit-icon.png', 'alt' => $alt)),
+            'icon' => theme('image', array('path' => drupal_get_path('module',_DFSI_MODULE_NAME) . '/pic/edit-icon.png', 'alt' => $alt)),
             'title' => $alt,
         );
     }
@@ -103,7 +103,7 @@ function render($values)
       $actions[] = array(
         'name' => t('Delete'),
         'url' => 'node/'  . $values->nid . '/delete',
-        'icon' => theme('image', array('path' => drupal_get_path('module',  _MODULE_NAME ) . '/pic/delete-icon.png', 'alt' => $alt)),
+        'icon' => theme('image', array('path' => drupal_get_path('module',  _DFSI_MODULE_NAME ) . '/pic/delete-icon.png', 'alt' => $alt)),
         'title' => $alt,
       );
     }

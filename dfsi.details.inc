@@ -5,11 +5,11 @@
 // @(#) 31/12/2013
 // ------------------------------------------------
 
-if( !defined("_MODULE_NAME") ) { define( "_MODULE_NAME" , "dfsi" ); }                                               // nom du module
-if( !defined("_INCLUDE_EXTENSION") ) { define( "_INCLUDE_EXTENSION" , "inc" ); }                                    // extension pour les fichiers include php
+if( !defined("_DFSI_MODULE_NAME") ) { define( "_DFSI_MODULE_NAME" , "dfsi" ); }                                               // nom du module
+if( !defined("_DFSI_INCLUDE_EXTENSION") ) { define( "_DFSI_INCLUDE_EXTENSION" , "inc" ); }                                    // extension pour les fichiers include php
 
-module_load_include( _INCLUDE_EXTENSION , _MODULE_NAME , "dfsi.define");
-module_load_include( _INCLUDE_EXTENSION , _MODULE_NAME , "dfsi.api");
+module_load_include( _DFSI_INCLUDE_EXTENSION , _DFSI_MODULE_NAME , "dfsi.define");
+module_load_include( _DFSI_INCLUDE_EXTENSION , _DFSI_MODULE_NAME , "dfsi.api");
 
 
 //function dfsi_GetAddDetailContentTypeLink($vid,$tid,$taxonomyTermName) 
@@ -255,7 +255,7 @@ function dfsi_ReadTermContentTypeRelation(&$did,&$type,$vid,$tid)
 // --------------------------------------------
 function dfsi_IsComplementaryDataEnabled( $node )
 {
-    $language = field_language('node', $node, 'field_service_type', $langcode = NULL);
+    $language = field_language('node', $node, 'field_DFSI_SERVICE_type', $langcode = NULL);
     $tid = $node->field_service_type[$language][0]['tid'];
     $Sql  = "SELECT TYPE FROM  `"._DFSI_DETAIL_TABLE."` WHERE `tid`=".$tid.";";
     $relations = db_query($Sql);  
