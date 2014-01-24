@@ -57,8 +57,6 @@ function dfsi_ComplementDataTypePage($args)
             
             popup_forms_parent_js();
             
-            //$options = array('html' => TRUE, );
-            //$link = l(t("Ajouter"),$url, $options );
             $link = '<a href="';
             $link .=  $url;
             $link .=  '">'.t("Ajouter").'</a>';
@@ -140,11 +138,12 @@ function dfsi_DetailAddForm($form, &$form_state, $vid , $tid , $taxonomyTermName
 // ------------------------------------------
 function dfsi_DetailAddForm_submit($form, &$form_state) 
 { 
+        dpm($form);
     // confirmation de creation du  type de contenu de detail
      if($form_state['values']['op'] == t('Enregistrer') )
      {
-         //dfsi_AddDetailRshp( $form['vid'] , $form['tid'] , $form['newContentTypeName']['#value'] );
-         //dfsi_createDetailContentType( $form['newContentTypeName']['#value'], $form['taxonomyTermName']['#value'] );
+         dfsi_AddDetailRshp( $form['vid']['#value'] , $form['tid']['#value'] , $form['newContentTypeName']['#value'] );
+         dfsi_createDetailContentType( $form['newContentTypeName']['#value'], $form['taxonomyTermName']['#value'] );
          dsm("Le type de contenu ".$form['taxonomyTermName']['#value']."_detail à été créé...");
      }
 }
