@@ -12,22 +12,9 @@ module_load_include( _DFSI_INCLUDE_EXTENSION , _DFSI_MODULE_NAME , "dfsi.define"
 module_load_include( _DFSI_INCLUDE_EXTENSION , _DFSI_MODULE_NAME , "dfsi.api");
 
 
-//function dfsi_GetAddDetailContentTypeLink($vid,$tid,$taxonomyTermName) 
-//{
-//
-//        $arguments = json_encode($arg);
-//        
-//        popup_forms_parent_js();
-//        $js = "
-//            (function($) {
-//            $(document).ready(function() {
-//            popupFormsFormShow('dfsi_DetailAddForm',null,{$arguments});
-//            });
-//            })(jQuery);
-//        ";
-//        drupal_add_js($js, 'inline');
-//}
-//// -------------------------------------------------
+
+
+// -------------------------------------------------
 // page d'association d'un type de contenu
 // pourles données supplémentaires liées
 // seulement à un terme de taxonomie
@@ -37,12 +24,13 @@ function dfsi_ComplementDataTypePage($args)
     $output="";
     $did=-1;    
     
+    popup_forms_parent_js();
+    
     //lecture du type de contenu spécifique à ce terme
     $type = dfsi_ReadTermContentTypeRelation($did,$type,$args->vid,$args->tid);
     if($type == NULL)
     {
-        popup_forms_parent_js();
-        
+
         if( user_access( _DFSI_PERM_ADD_CHUNK_DATA_TYPE))
         {
             // parametres à passer à popupFormShow() en flux json
@@ -60,8 +48,8 @@ function dfsi_ComplementDataTypePage($args)
             
             // appel javascript la fonction du module  popup_forms
             $url = "javascript:popupFormsFormShow('dfsi_DetailAddForm',null,{$PopupArgs});";   
+            
             // creation du lien
-
             $link = '<a href="';
             $link .=  $url;
             $link .=  '">'.t("Ajouter").'</a>';
@@ -100,14 +88,12 @@ function dfsi_ComplementDataTypePage($args)
     return $output;
 }
 
-
 // -------------------------------------------------
 // formulaire d'ajout d'un type de contenu detail
 // affiché en modal
 // -------------------------------------------------
 function dfsi_DetailAddForm($form, &$form_state, $vid , $tid , $taxonomyTermName ) 
-{
-    
+{    
     $newContentTypeName = $vid .$tid ."_detail";
     // nom lisible    
     $humanName  = strtolower($taxonomyTermName)."_detail";
@@ -159,10 +145,8 @@ function dfsi_DetailAddForm_submit($form, &$form_state)
      {
          dfsi_AddDetailRshp( $form['vid']['#value'] , $form['tid']['#value'] , $form['newContentTypeName']['#value'] );
          dfsi_createDetailContentType( $form['newContentTypeName']['#value'], $form['taxonomyTermName']['#value'] );
-         //dsm("Le type de contenu ".$form['taxonomyTermName']['#value']."_detail à été créé...");
-         //$path = drupal_get_path_alias(current_path());
-         //drupal_goto($path);
-
+         $path = "taxonomy/term/{$form['tid']['#value']}/Chunk";
+         drupal_goto($path);
      }
 }
 

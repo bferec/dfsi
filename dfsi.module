@@ -427,6 +427,7 @@ function dfsi_popup_forms_data()
 {
     return array
     (
+        
         'dfsi_DetailAddForm' => array
         (
             'title' => t("Création du type de contenu"),

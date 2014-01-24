@@ -34,21 +34,7 @@ function dfsi_menu()
             'file' => 'dfsi.details.inc',
             'weight' => 100,         
         );
-        /*
-        $items['taxonomy/term/%taxonomy_term/Chunk/Add'] = array
-        (   
-            'title' => t("Ajouter un type de contenu de détail"),
-            'type' => MENU_LOCAL_ACTION,
-            'page callback' => 'dfsi_AddDetailComplementType',   
-            'access callback' => true,
-            'access arguments' => array(_DFSI_PERM_ADD_CHUNK_DATA_TYPE),
-            'page arguments' => array(2),
-            'file' => 'dfsi.details.inc',
-
-        );
-
-         */
-        $items['taxonomy/term/%taxonomy_term/Chunk/Edit'] = array
+       $items['taxonomy/term/%taxonomy_term/Chunk/Edit'] = array
         (   
             'title' => t("Modifier"),
             'type' => MENU_LOCAL_ACTION,
