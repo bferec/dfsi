@@ -1,10 +1,15 @@
 <?php
 
+if( !defined("DFSIEXPORT_MODULE_NAME") ) { define( "DFSIEXPORT_MODULE_NAME" , "dfsiexport" ); }                 // nom du module
+if( !defined("DFSIEXPORT_INCLUDE_EXTENSION") ) { define( "DFSIEXPORT_INCLUDE_EXTENSION" , "inc" ); }      		// extension pour les fichiers include php
+
+module_load_include( DFSIEXPORT_INCLUDE_EXTENSION , DFSIEXPORT_MODULE_NAME , "dfsiexport.define");
 
 // ----------------------------------------------------------
 // Hook_menu
 // ----------------------------------------------------------
-// 
+// ----------------------------------------------------------
+// Fonction de creation du menu de "dfsiexport"
 // ----------------------------------------------------------
 function dfsiexport_menu() 
 {

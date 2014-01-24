@@ -1,10 +1,20 @@
 <?php
 
+// ------------------------------------------------
 // dfsiexport.install
 // Amael Hervoche
 // 21/01/2014
+// ------------------------------------------------
+
+if( !defined("DFSIEXPORT_MODULE_NAME") ) { define( "DFSIEXPORT_MODULE_NAME" , "dfsiexport" ); }                 // nom du module
+if( !defined("DFSIEXPORT_INCLUDE_EXTENSION") ) { define( "DFSIEXPORT_INCLUDE_EXTENSION" , "inc" ); }      		// extension pour les fichiers include php
+
+module_load_include( DFSIEXPORT_INCLUDE_EXTENSION , DFSIEXPORT_MODULE_NAME , "dfsiexport.define");
 
 
+// --------------------------------------------------
+// Hook_install
+// --------------------------------------------------
 // --------------------------------------------------
 // Fonction d'installation du module
 // --------------------------------------------------
@@ -15,6 +25,9 @@ function dfsiexport_install()
 }
 
 // --------------------------------------------------
+// Hook_uninstall
+// --------------------------------------------------
+// --------------------------------------------------
 // Fonction de desinstallation du module
 // --------------------------------------------------
 function dfsiexport_uninstall()
@@ -23,6 +36,9 @@ function dfsiexport_uninstall()
 	dfsiexport_Delete_variables();
 }
 
+// --------------------------------------------------
+// Hook_schema
+// --------------------------------------------------
 // --------------------------------------------------
 // Fonction de mise en place des tables du module
 // --------------------------------------------------

@@ -1,8 +1,15 @@
 <?php
 
+// ----------------------------------------------------------
 // Module exportation dfsi
 // Amael Hervoche
 // 21/01/2014
+// ----------------------------------------------------------
 
-module_load_include( 'inc' , 'dfsiexport' , "dfsiexport.permissions");
-module_load_include( 'inc' , 'dfsiexport' , "dfsiexport.menu");
+if( !defined("DFSIEXPORT_MODULE_NAME") ) { define( "DFSIEXPORT_MODULE_NAME" , "dfsiexport" ); }                 // nom du module
+if( !defined("DFSIEXPORT_INCLUDE_EXTENSION") ) { define( "DFSIEXPORT_INCLUDE_EXTENSION" , "inc" ); }      		// extension pour les fichiers include php
+
+module_load_include( DFSIEXPORT_INCLUDE_EXTENSION , DFSIEXPORT_MODULE_NAME , "dfsiexport.define");
+module_load_include( DFSIEXPORT_INCLUDE_EXTENSION , DFSIEXPORT_MODULE_NAME , "dfsiexport.permissions");
+module_load_include( DFSIEXPORT_INCLUDE_EXTENSION , DFSIEXPORT_MODULE_NAME , "dfsiexport.menu");
+
