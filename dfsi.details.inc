@@ -255,13 +255,14 @@ function dfsi_ReadTermContentTypeRelation(&$did,&$type,$vid,$tid)
 // --------------------------------------------
 function dfsi_IsComplementaryDataEnabled( $node )
 {
-    $language = field_language('node', $node, 'field_DFSI_SERVICE_type', $langcode = NULL);
+    //$relation = NULL;
+    $language = field_language('node', $node, 'field_service_type', $langcode = NULL);
     $tid = $node->field_service_type[$language][0]['tid'];
     $Sql  = "SELECT TYPE FROM  `"._DFSI_DETAIL_TABLE."` WHERE `tid`=".$tid.";";
     $relations = db_query($Sql);  
     
     $relation = $relations->fetchAssoc() ; 
-
+    
     return ($relation != NULL);
 }
 
