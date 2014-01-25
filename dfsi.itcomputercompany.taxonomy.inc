@@ -18,8 +18,9 @@ function  dfsi_Create_itcomputercompany_Taxonomy_term( $taxonomyName )
 {
     $listeTermes = array
     (
-        "Oracle" , "RedHat" , "Paessler" , "VEEAM" , "VmWare" , "Citrix" ,
-        "Wyse",_DFSI_UNKNOWN_SERVICE_TYPE
+        "Cisco" , "Symantec" , "Apple" , "Oracle" , "RedHat" , 
+        "Paessler" , "VEEAM" , "VmWare" , "Citrix" ,
+        "Wyse","Hewlet Packard" , _DFSI_UNKNOWN_SERVICE_TYPE
     );
     foreach( $listeTermes as $name  ) 
     {

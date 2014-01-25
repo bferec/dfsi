@@ -16,7 +16,7 @@ module_load_include( _DFSI_INCLUDE_EXTENSION , _DFSI_MODULE_NAME , "dfsi.api");
 
 // -------------------------------------------------
 // page d'association d'un type de contenu
-// pourles données supplémentaires liées
+// pour les données supplémentaires liées
 // seulement à un terme de taxonomie
 // -------------------------------------------------
 function dfsi_ComplementDataTypePage($args)
