@@ -28,7 +28,7 @@ function dfsi_menu()
         (
             'title' => t("Données complémentaires") ,
             'type' => MENU_LOCAL_TASK,
-            'page callback' => 'dfsi_ComplementDataTypePage',    
+            'page callback' => 'dfsi_DetailsDatasTypePage',    
             'access callback' => TRUE,    
             'page arguments' => array(2),
             'file' => 'dfsi.details.inc',

@@ -48,7 +48,7 @@ function dfsi_IsAddForm($form)
 // ------------------------------------------------
 //  submit sous formulaire
 // ------------------------------------------------
-function dfsi_detail_ajax_callback($form, &$form_state) 
+function dfsi_Edit_Detail_Callback($form, &$form_state) 
 {
         dpm($form);
 }
@@ -63,14 +63,7 @@ function dfsi_CreateDetailForm($form,$node,$contentTypeName)
     unset($subform['actions']['preview']);    
     // TODO etiquette sur même ligne + boutton submit..
     hide($subform['additional_settings']); 
-    $subform['#prefix'] = '<div id="container">';
-    $subform['#suffix'] = '</div>';
-    $subform['actions']['submit']['#ajax'] = array
-    (
-        'callback' => 'dfsi_detail_ajax_callback',
-        'wrapper' => 'container',        
-    );
-    $subform['#submit'][] = 'dfsi_detail_ajax_callback';
+    $subform['#submit'][] = 'dfsi_Edit_Detail_Callback';
     return $subform;
 }
 // -------------------------------------------
@@ -217,7 +210,7 @@ function dfsi_AddDetailSections(&$form,$contentTypeNames)
         }
         else
         {
-            $msg = t('Aucun type de données complémentaires défini pour cet élément ...');
+            $msg = t('Aucun type de données complémentaires défini.');
         }
         $form['DetailDataSection']['msg']= array
         (
@@ -343,13 +336,26 @@ function dfsi_AlterEditForm( &$form )
 // -----------------------------
 function dfsi_AddSubForms(&$form, $contentTypeNames)
 {    
+    
+    
+    
     $node =  $form['#node'];
     // Ajout des sous formulaires de detail                   
     foreach ($contentTypeNames as $key => $contentTypeName)
     {    
+        $form['DetailDataSection'][$key]['links'] = array();
+        
         $detailNode = dfsi_ExistDetailContent(dfsi_GetNidOf($node),$contentTypeName['vid'],$contentTypeName['tid'] );
         if( $detailNode != null )
-        {                
+        {       
+            $form['DetailDataSection'][$key]['links'][]= array
+            (
+                '#type' => 'link',
+                '#title'=> t('Modifier '.$key),
+                '#href'=> "",
+                '#description' => t(""),                 
+            );             
+            /*
             node_object_prepare($detailNode);
             $subform = dfsi_CreateDetailForm($form,$detailNode,$contentTypeName);  
 
@@ -357,43 +363,18 @@ function dfsi_AddSubForms(&$form, $contentTypeNames)
             $subform['detail_nid'] = array('#type' => 'hidden', '#value' => dfsi_GetNidOf($node));
             $subform['detail_vid'] = array('#type' => 'hidden', '#value' => $contentTypeName['vid']);
             $subform['detail_tid'] = array('#type' => 'hidden', '#value' => $contentTypeName['tid']);
-
-            // ajout au formulaire principal
-            $form['DetailDataSection'][$key]['formulaire'] = $subform;
-
-            //unset($form['DetailDataSection'][$key]['formulaire']['actions']['submit']);
-            //unset($form['DetailDataSection'][$key]['formulaire']['#submit']);
-/*
-            $saveButton= array
-            (
-                //'#executes_submit_callback' => TRUE,
-                '#type' => 'submit',
-                '#value' => t("Enregistrer le détail"),
-                '#submit' => '',
-                '#weight' => 254,
-                '#ajax' => array
-                (
-                    'callback' => 'dfsi_subform_form_submit',
-                    'wrapper' => $form['DetailDataSection'][$key]['formulaire'],
-                ),
-            );  
-            $form['DetailDataSection']['Serveur']['formulaire']['actions']['submit'] = $saveButton;
-            */
-            //
-            
+            $form['DetailDataSection'][$key]['formulaire'] = $subform;           
+            */     
         }
         else
         {
             $label = $contentTypeName['label'];
-            $form['DetailDataSection'][$key]['links'] = array
+            $form['DetailDataSection'][$key]['links'][]= array
             (
-                array
-                (
                 '#type' => 'link',
                 '#title'=> t('Ajouter un détail pour '.$key),
                 '#href'=> "http://www.google.fr",
-                '#description' => t("création d'un  élément de détail"),
-                ),                    
+                '#description' => t("création d'un élément de détail"),                 
             ); 
         }
     }    
