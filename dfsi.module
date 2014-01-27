@@ -21,8 +21,13 @@ module_load_include( _DFSI_INCLUDE_EXTENSION , _DFSI_MODULE_NAME , "dfsi.menu");
 module_load_include( _DFSI_INCLUDE_EXTENSION , _DFSI_MODULE_NAME , "dfsi.details");
 
 // ----------------------------
-// validation titre unique
-// pour service ou caontainer
+/* 
+ * validation titre unique
+ * pour service ou caontainer
+ * @param $node  : noeud dont ont doit verifier que le titre n'existe pas
+ * @param $title : titre de ce noeud
+ * @param $form_state : etat formulaire
+ */
 // ----------------------------
 function dfsi_validate_title( $node , $form , $form_state  )
 {
@@ -59,7 +64,7 @@ function dfsi_node_validate( $node , $form , $form_state  )
 // Hook_node_presave
 // ------------------------------------------
 // tout element modifié necessite une
-// // remise à jour du statut 
+// remise à jour du statut 
 // ------------------------------------------
 function dfsi_node_presave( $node ) 
 {
@@ -88,7 +93,6 @@ function dfsi_node_presave( $node )
 // ------------------------------------------
 function dfsi_node_submit( $node ) 
 { 
-    //dpm($node);
     // Si le noeud est un container
     // tout element contenu devient dependant de
     // son container    
@@ -107,7 +111,7 @@ function dfsi_node_submit( $node )
 // ------------------------------------
 // Hook_entity_info_alter
 // ------------------------------------
-// definit un nouveau mode s'affichage
+// definit un nouveau mode d'affichage
 // ------------------------------------
 function dfsi_entity_info_alter( &$entity_info ) 
 {
@@ -279,68 +283,53 @@ function dfsi_node_access($node, $op, $account)
     {
         return NODE_ACCESS_IGNORE;
     }
-    
-    if( $type == _DFSI_SERVICE )
+
+    switch ($op)  
     {
-        switch ($op)  
-        {
-            case 'create':
-                if( user_access('create service dfsi', $account))  
-                {
-                    return NODE_ACCESS_ALLOW;
-                }
-            break;
-            case 'update':
-                if (user_access('update service dfsi', $account))  
-                {
-                    return NODE_ACCESS_ALLOW;
-                }
-            break;
-            case 'delete':
-                if (user_access('delete service dfsi', $account))  
-                {
-                    return NODE_ACCESS_ALLOW;
-                }
-            break;
-            case 'view':
-                if (user_access('view service dfsi', $account))  
-                {
-                    return NODE_ACCESS_ALLOW;
-                }
-            break;
-        }
+        case 'create':
+            if( $type == _DFSI_CONTAINER && user_access(_DFSI_PERM_CREATE_DFSI_CONTAINER, $account))  
+            {
+                return NODE_ACCESS_ALLOW;
+            }         
+            if( $type == _DFSI_SERVICE && user_access(_DFSI_PERM_CREATE_DFSI_SERVICE, $account))  
+            {
+                return NODE_ACCESS_ALLOW;
+            }            
+        break;
+
+        case 'update':
+            if( $type == _DFSI_CONTAINER && user_access(_DFSI_PERM_UPDATE_DFSI_CONTAINER, $account) )  
+            {
+                return NODE_ACCESS_ALLOW;
+            }
+            if( $type == _DFSI_SERVICE && user_access(_DFSI_PERM_UPDATE_DFSI_SERVICE, $account) )  
+            {
+                return NODE_ACCESS_ALLOW;
+            }                
+        break;
+
+        case 'delete':
+            if($type == _DFSI_SERVICE &&  user_access(_DFSI_PERM_DELETE_DFSI_SERVICE, $account))  
+            {
+                return NODE_ACCESS_ALLOW;
+            }
+            if($type == _DFSI_CONTAINER &&  user_access(_DFSI_PERM_DELETE_DFSI_CONTAINER, $account))  
+            {
+                return NODE_ACCESS_ALLOW;
+            }                
+        break;
+        case 'view':
+            if( $type == _DFSI_SERVICE &&  user_access(_DFSI_PERM_VIEW_DFSI_SERVICE, $account))  
+            {
+                return NODE_ACCESS_ALLOW;
+            }
+            if( $type == _DFSI_CONTAINER &&  user_access(_DFSI_PERM_VIEW_DFSI_CONTAINER, $account))  
+            {
+                return NODE_ACCESS_ALLOW;
+            }                
+        break;
     }
-    if( $type == _DFSI_CONTAINER )
-    {
-        switch ($op)  
-        {
-            case 'create':
-                if( user_access('create container dfsi', $account))  
-                {
-                    return NODE_ACCESS_ALLOW;
-                }
-              break;
-            case 'update':
-                if (user_access('update container dfsi', $account))  
-                {
-                    return NODE_ACCESS_ALLOW;
-                }
-              break;
-            case 'delete':
-                if (user_access('delete container dfsi', $account))  
-                {
-                    return NODE_ACCESS_ALLOW;
-                }
-              break;
-            case 'view':
-                if (user_access('view container dfsi', $account))  
-                {
-                    return NODE_ACCESS_ALLOW;
-                }
-              break;
-        }
-    }    
-    // autres cas : interdit
+   // autres cas : interdit
     return NODE_ACCESS_DENY;
 
     
