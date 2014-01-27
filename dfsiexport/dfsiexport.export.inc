@@ -7,51 +7,52 @@
 // @(#) 24/01/2014
 // ------------------------------------------------
 
-
 function dfsiexport_Export()
 {
-	$form['exportation'] =array
+    $path = current_path();
+
+    $form['dfsiexport_choixExport'] = array
     (
-		'#markup' => 'Export de données',
-	);
-	
-	$form['exportation']['dfsiexport_choixExport'] = array
+        '#type' => 'checkboxes',
+        '#title' => t("Eléments à exporter"),
+        '#title_display'  => 'before',
+        '#options' => array
+        (
+                1 => t('Containers et services'),
+                2 => t('Dépendances (directes et indirectes)'),
+                3 => t('Taxonomies (types de service et construteurs)')	
+        ),
+        '#default_value'  => variable_get('dfsiexport_choixExport', array(true,false,false)),
+        '#value' => array(),
+        '#attributes' => array()
+    );	
+    $form['dfsiexport_choixExport'] = form_process_checkboxes($form['dfsiexport_choixExport']);
+        
+    $form['actions']['Exporter'] = array
     (
-		'#type' => 'checkboxes',
-		'#title' => t("Que voulez vous exporter ?"),
-		'#options' => array
-                (
-                        1=> t('Containers et services'),
-                        2 => t('Dependances directes et indirectes'),
-                        3 => t('Taxonomies')	
-                ),
-                '#default_value'  => variable_get('dfsiexport_choixExport', array(1)),
-//		'#attributes' => array
-//		(
-//			'name' => 'example-checkboxes[]'
-//		)
-	);	
-	$form['exportation']['dfsiexport_choixExport'] = form_process_checkboxes($form['exportation']['dfsiexport_choixExport']);
-        
-	$form['exportation']['#submit'][] = 'dfsiexport_export_form_submit';
-        
-	return $form;
+    '#type' => 'submit',
+    '#value' => t('Exporter'),
+    '#weight' => 255,
+    '#submit' => array('dfsiexport_export_form_submit'),
+
+   );    
+   return  $form;
 }
 
-function dfsiexport_export_form_submit($form, &$form_state) 
+function dfsiexport_form_submit($form, &$form_state) 
 {
+    dpm($form);
     
 }
-
 function dfsiexport_Import()
 {
-	$output = "";
+    $output = "";
     $output = array
     (
-			'contentImport' => array
-            (
-                '#markup' => 'Import de données',
-            ),
-	);
+	'contentImport' => array
+        (
+            '#markup' => 'Import de données',
+        ),
+    );
 	return $output;
 }

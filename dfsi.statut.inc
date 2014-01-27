@@ -224,6 +224,7 @@ function dfsi_ModifyStatut($args)
      }
      // retour à la page appelante => liste service
      drupal_goto( $_SERVER['HTTP_REFERER'] );
+     //drupal_goto( current_path() );
     return;
 }
 

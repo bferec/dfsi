@@ -30,31 +30,32 @@ function dfsiexport_menu()
 	
 	$items['exporter'] = array
     (
-		'title' => t("Import/export de données"),
-		'page callback' => 'dfsiexport_Export',
-		'file' => 'dfsiexport.export.inc',
-		'access callback' => TRUE
+            'title' => t("Import/export"),
+            'page callback' => 'dfsiexport_Export',
+            'file' => 'dfsiexport.export.inc',
+            'access callback' => TRUE
     );
 
 	$items['exporter/exportation'] = array
 	(
-		'title' => t('exportation'),
-		'type' => MENU_DEFAULT_LOCAL_TASK,
-		 'page callback' => 'drupal_get_form',
-        'page arguments' => array('dfsiexport_Export'),
-		'access callback' => TRUE,
-		'file' => 'dfsiexport.export.inc',
-		'weight' => 100,  
+            'title' => t('Exportation'),
+            'type' => MENU_DEFAULT_LOCAL_TASK,
+            //'page callback' => 'dfsiexport_Export',
+            'page callback' => 'drupal_get_form',
+            'page arguments' => array('dfsiexport_Export'),
+            'access callback' => TRUE,
+            'file' => 'dfsiexport.export.inc',
+            'weight' => 1,  
     );
 	
-	$items['exporter/importation'] = array
+    $items['exporter/importation'] = array
     (
-		'title' => t('importation'),
-		'type' => MENU_LOCAL_TASK,
-		'page callback' => 'dfsiexport_Import',  
-		'access callback' => TRUE,
-		'file' => 'dfsiexport.export.inc',
-		'weight' => 200,  
+        'title' => t('Importation'),
+        'type' => MENU_LOCAL_TASK,
+        'page callback' => 'dfsiexport_Import',  
+        'access callback' => TRUE,
+        'file' => 'dfsiexport.export.inc',
+        'weight' => 2,  
     );
     return $items;
 }
