@@ -336,9 +336,7 @@ function dfsi_AlterEditForm( &$form )
 // -----------------------------
 function dfsi_AddSubForms(&$form, $contentTypeNames)
 {    
-    
-    
-    
+     
     $node =  $form['#node'];
     // Ajout des sous formulaires de detail                   
     foreach ($contentTypeNames as $key => $contentTypeName)
