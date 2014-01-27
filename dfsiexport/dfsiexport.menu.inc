@@ -1,10 +1,10 @@
 <?php
 
-if( !defined("_DFSIEXPORT_MODULE_NAME") ) { define( "_DFSIEXPORT_MODULE_NAME" , "dfsiexport" ); }                 // nom du module
-if( !defined("_DFSI_INCLUDE_EXTENSION") ) { define( "_DFSI_INCLUDE_EXTENSION" , "inc" ); }      		// extension pour les fichiers include php
+// if( !defined("_DFSIEXPORT_MODULE_NAME") ) { define( "_DFSIEXPORT_MODULE_NAME" , "dfsiexport" ); }                 // nom du module
+// if( !defined("_DFSI_INCLUDE_EXTENSION") ) { define( "_DFSI_INCLUDE_EXTENSION" , "inc" ); }      		// extension pour les fichiers include php
 
-module_load_include( _DFSI_INCLUDE_EXTENSION , _DFSIEXPORT_MODULE_NAME , "dfsiexport.define");
-module_load_include( _DFSI_INCLUDE_EXTENSION , _DFSI_MODULE_NAME , "dfsi.define");
+// module_load_include( _DFSI_INCLUDE_EXTENSION , _DFSIEXPORT_MODULE_NAME , "dfsiexport.define");
+// module_load_include( _DFSI_INCLUDE_EXTENSION , _DFSI_MODULE_NAME , "dfsi.define");
 
 
 // ----------------------------------------------------------
@@ -26,6 +26,35 @@ function dfsiexport_menu()
         'page callback' => 'drupal_get_form',
         'page arguments' => array('dfsiexport_admin_settings'),
         'file' => 'dfsiexport.admin.inc'
+    );
+	
+	$items['exporter'] = array
+    (
+		'title' => t("Import/export de données"),
+		'page callback' => 'dfsiexport_Export',
+		'file' => 'dfsiexport.export.inc',
+		'access callback' => TRUE
+    );
+
+	$items['exporter/exportation'] = array
+	(
+		'title' => t('exportation'),
+		'type' => MENU_DEFAULT_LOCAL_TASK,
+		 'page callback' => 'drupal_get_form',
+        'page arguments' => array('dfsiexport_Export'),
+		'access callback' => TRUE,
+		'file' => 'dfsiexport.export.inc',
+		'weight' => 100,  
+    );
+	
+	$items['exporter/importation'] = array
+    (
+		'title' => t('importation'),
+		'type' => MENU_LOCAL_TASK,
+		'page callback' => 'dfsiexport_Import',  
+		'access callback' => TRUE,
+		'file' => 'dfsiexport.export.inc',
+		'weight' => 200,  
     );
     return $items;
 }
