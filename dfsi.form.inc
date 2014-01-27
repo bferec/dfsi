@@ -325,7 +325,7 @@ function dfsi_AlterEditForm( &$form )
         // si utilisation de données complémentaires ?
         if( dfsi_ComplementaryDataEnabled() )
         {
-            dfsi_AddSubForms( $form , $contentTypeNames);
+            dfsi_BuildChunkEditDataSection( $form , $contentTypeNames);
         }
        
     }  
@@ -334,7 +334,7 @@ function dfsi_AlterEditForm( &$form )
 // -----------------------------
 // // ajout des sous formulaires
 // -----------------------------
-function dfsi_AddSubForms(&$form, $contentTypeNames)
+function dfsi_BuildChunkEditDataSection(&$form, $contentTypeNames)
 {    
      
     $node =  $form['#node'];

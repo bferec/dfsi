@@ -44,7 +44,7 @@ function dfsi_DetailsDatasTypePage($args)
             $PopupArgs = str_replace ( '"' , "'" ,$PopupArgs );
             
             // appel javascript la fonction du module  popup_forms
-            $url = "javascript:popupFormsFormShow('dfsi_DetailAddForm',null,{$PopupArgs});";   
+            $url = "javascript:popupFormsFormShow('dfsi_DetailContentTypeAddForm',null,{$PopupArgs});";   
             
             // creation du lien
             $link = '<a href="';
@@ -89,7 +89,7 @@ function dfsi_DetailsDatasTypePage($args)
 // formulaire d'ajout d'un type de contenu detail
 // affiché en modal
 // -------------------------------------------------
-function dfsi_DetailAddForm($form, &$form_state, $vid , $tid , $taxonomyTermName ) 
+function dfsi_DetailContentTypeAddForm($form, &$form_state, $vid , $tid , $taxonomyTermName ) 
 {    
     $newContentTypeName = $vid .$tid ."_detail";
     // nom lisible    
@@ -122,7 +122,7 @@ function dfsi_DetailAddForm($form, &$form_state, $vid , $tid , $taxonomyTermName
       '#type' => 'submit',
       '#value' => t('Annuler'),
     );    
-    $form['#submit'][] = 'dfsi_DetailAddForm_submit';
+    $form['#submit'][] = 'dfsi_DetailContentTypeAddForm_submit';
     
     // champs cachés
     $form['vid']= array( '#type' => 'hidden','#value' => $vid );
@@ -135,7 +135,7 @@ function dfsi_DetailAddForm($form, &$form_state, $vid , $tid , $taxonomyTermName
 // ------------------------------------------
 // callback function pour fsi_DetailAddForm()
 // ------------------------------------------
-function dfsi_DetailAddForm_submit($form, &$form_state) 
+function dfsi_DetailContentTypeAddForm_submit($form, &$form_state) 
 { 
     // confirmation de creation du  type de contenu de detail
      if($form_state['values']['op'] == t('Enregistrer') )
@@ -265,7 +265,11 @@ function dfsi_GetTermRelationForContentType($typeMachineName)
 }
 
 
-function dfsi_CreateDetailFieldsetContent($node,$key,$contentTypeName)
+// ------------------------------------------------------
+// creation d'une section details de contenu 
+// pour un noeud et un terme
+// ------------------------------------------------------
+function dfsi_BuildChunkViewContent($node,$key,$contentTypeName)
 {
     // creation de la section repliable correspondant au type de contenu détail
     $fieldsetContent  = '<fieldset id="fieldset-'.$key.'" class="collapsible">';
@@ -299,7 +303,10 @@ function dfsi_CreateDetailFieldsetContent($node,$key,$contentTypeName)
     return $fieldsetContent;
 }
 
-function dfsi_GetComplementaryDataSection( $node )
+// ------------------------------------------------------
+// Creation des sections details de contenu pour un noeud
+// ------------------------------------------------------
+function dfsi_BuildChunkViewDataSection( $node )
 {
                    
     $fieldsetTitle = t('Données complémentaires');
@@ -318,7 +325,7 @@ function dfsi_GetComplementaryDataSection( $node )
         foreach ($contentTypeNames as $key => $contentTypeName)
         {    
             // créer la section repliable contenant les infos pour ces details de type de contenu
-            $fieldsetContent = dfsi_CreateDetailFieldsetContent($node,$key,$contentTypeName);
+            $fieldsetContent = dfsi_BuildChunkViewContent($node,$key,$contentTypeName);
         }
     }
     // 

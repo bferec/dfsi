@@ -61,4 +61,8 @@ if( !defined("_DFSI_PERM_ADD_CHUNK_DATA_TYPE") ) { define( "_DFSI_PERM_ADD_CHUNK
 if( !defined("_DFSI_PERM_UPDATE_CHUNK_DATA_TYPE") ) { define( "_DFSI_PERM_UPDATE_CHUNK_DATA_TYPE" , "dfsi: update chunk data type" ); }
 if( !defined("_DFSI_PERM_DELETE_CHUNK_DATA_TYPE") ) { define( "_DFSI_PERM_DELETE_CHUNK_DATA_TYPE" , "dfsi: delete chunk data type" ); }
 
+if( !defined("_DFSI_PERM_ADD_CHUNK_DATA") ) { define( "_DFSI_PERM_ADD_CHUNK_DATA" , "dfsi: add chunk data" ); }
+if( !defined("_DFSI_PERM_UPDATE_CHUNK_DATA") ) { define( "_DFSI_PERM_UPDATE_CHUNK_DATA" , "dfsi: update chunk data" ); }
+if( !defined("_DFSI_PERM_DELETE_CHUNK_DATA") ) { define( "_DFSI_PERM_DELETE_CHUNK_DATA" , "dfsi: delete chunk data" ); }
+
 

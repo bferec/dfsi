@@ -369,7 +369,7 @@ function dfsi_node_view($node, $view_mode)
                 drupal_add_js('misc/form.js');
                 drupal_add_js('misc/collapse.js');
 
-                $detailSection  = dfsi_GetComplementaryDataSection( $node );                 
+                $detailSection  = dfsi_BuildChunkViewDataSection( $node );                 
                 $node->content['DetailData']= array
                 (
                     '#markup' => $detailSection,  
@@ -400,7 +400,7 @@ function dfsi_init()
         $js = "
             (function($) {
             $(document).ready(function() {
-            popupFormsFormShow('dfsi_DetailAddForm',null,{$arguments});
+            popupFormsFormShow('dfsi_DetailContentTypeAddForm',null,{$arguments});
             });
             })(jQuery);
         ";
@@ -417,7 +417,7 @@ function dfsi_popup_forms_data()
     return array
     (
         
-        'dfsi_DetailAddForm' => array
+        'dfsi_DetailContentTypeAddForm' => array
         (
             'title' => t("Création du type de contenu"),
             'access callback' => TRUE,
