@@ -8,6 +8,16 @@
 // ------------------------------------------------
 
 
+function dfsiexport_ExportFormGetOptions()
+{
+    return array
+        (
+                1 => t('Containers et services'),
+                2 => t('Dépendances (directes et indirectes)'),
+                3 => t('Taxonomies (types de service et construteurs)')	
+        );
+}
+
 function dfsiexport_ExportForm( $form, &$form_state ) 
 {
     $form['dfsiexport_choixExport'] = array
@@ -15,13 +25,9 @@ function dfsiexport_ExportForm( $form, &$form_state )
         '#type' => 'checkboxes',
         '#title' => t("Eléments à exporter"),
         '#title_display'  => 'before',
-        '#options' => array
-        (
-                1 => t('Containers et services'),
-                2 => t('Dépendances (directes et indirectes)'),
-                3 => t('Taxonomies (types de service et construteurs)')	
-        ),
-        '#default_value'  => array(1,3), //variable_get('dfsiexport_choixExport', array(1,2,3)),
+        '#options' => dfsiexport_ExportFormGetOptions(),
+        //'#default_value' => array(),
+                //array(1,3), //variable_get('dfsiexport_choixExport', array(1,2,3)),
         '#value' => array(),
         '#attributes' => array()
     );	
@@ -49,22 +55,24 @@ function dfsiexport_CreateExportFileName()
 
 function dfsiexport_ExportForm_form_submit($form, &$form_state) 
 {
+    
+   
    $dfsi_ExportData = "test de fichier";
    $dfsi_export_ModeExport = "csv";
    $dfsi_fileName = dfsiexport_CreateExportFileName();
-   $dfsi_ExportDestination = "temporary://{$fileName}";  
-    $filePath = file_unmanaged_save_data($dfsi_ExportData, $dfsi_ExportDestination, $replace = FILE_EXISTS_REPLACE);
-    
+   $dfsi_ExportDestination = "temporary://{$dfsi_fileName}";  
+   $filePath = file_unmanaged_save_data($dfsi_ExportData, $dfsi_ExportDestination, $replace = FILE_EXISTS_REPLACE);
     file_transfer
     (
          $filePath, array
          (
                'Content-Type' => 'text/csv',
-               'Content-Disposition' => 'attachment; $dfsi_fileName="'.$fileName.'"'
+               'Content-Disposition' => 'attachment; fileName="'.$dfsi_fileName.'"'
          )      
     );
-    
-    dsm("exportation achevée");
+  
+    // rien ne sera exécuté ici car appel à drupal_exit();
+    //dpm(file_delete($filePath, $force = TRUE));
 }
 
 function dfsiexport_ExportForm_form_validate($form, &$form_state) 

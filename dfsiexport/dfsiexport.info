@@ -14,4 +14,5 @@ files[] = dfsiexport.menu.inc
 files[] = dfsiexport.permissions.inc
 files[] = dfsiexport.define.inc
 files[] = dfsiexport.export.inc
+files[] = dfsiexport.form.inc
 
