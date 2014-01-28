@@ -7,10 +7,9 @@
 // @(#) 24/01/2014
 // ------------------------------------------------
 
-function dfsiexport_Export()
-{
-    $path = current_path();
 
+function dfsiexport_ExportForm( $form, &$form_state ) 
+{
     $form['dfsiexport_choixExport'] = array
     (
         '#type' => 'checkboxes',
@@ -22,28 +21,58 @@ function dfsiexport_Export()
                 2 => t('Dépendances (directes et indirectes)'),
                 3 => t('Taxonomies (types de service et construteurs)')	
         ),
-        '#default_value'  => variable_get('dfsiexport_choixExport', array(true,false,false)),
+        '#default_value'  => array(1,3), //variable_get('dfsiexport_choixExport', array(1,2,3)),
         '#value' => array(),
         '#attributes' => array()
     );	
+       
     $form['dfsiexport_choixExport'] = form_process_checkboxes($form['dfsiexport_choixExport']);
         
-    $form['actions']['Exporter'] = array
+    
+    
+    $form['submit'] = array
     (
     '#type' => 'submit',
     '#value' => t('Exporter'),
     '#weight' => 255,
-    '#submit' => array('dfsiexport_export_form_submit'),
-
+    '#submit' => array('dfsiexport_ExportForm_form_submit'),
    );    
    return  $form;
 }
 
-function dfsiexport_form_submit($form, &$form_state) 
+function dfsiexport_CreateExportFileName()
 {
-    dpm($form);
+    $result = date("Ymd-h:m:s")."-"."dfsi"."-export.text";
+    return $result;
+}
+
+
+function dfsiexport_ExportForm_form_submit($form, &$form_state) 
+{
+   $dfsi_ExportData = "test de fichier";
+   $dfsi_export_ModeExport = "csv";
+   $dfsi_fileName = dfsiexport_CreateExportFileName();
+   $dfsi_ExportDestination = "temporary://{$fileName}";  
+    $filePath = file_unmanaged_save_data($dfsi_ExportData, $dfsi_ExportDestination, $replace = FILE_EXISTS_REPLACE);
+    
+    file_transfer
+    (
+         $filePath, array
+         (
+               'Content-Type' => 'text/csv',
+               'Content-Disposition' => 'attachment; $dfsi_fileName="'.$fileName.'"'
+         )      
+    );
+    
+    dsm("exportation achevée");
+}
+
+function dfsiexport_ExportForm_form_validate($form, &$form_state) 
+{
     
 }
+    
+
 function dfsiexport_Import()
 {
     $output = "";

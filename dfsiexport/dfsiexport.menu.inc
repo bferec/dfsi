@@ -31,7 +31,8 @@ function dfsiexport_menu()
 	$items['exporter'] = array
     (
             'title' => t("Import/export"),
-            'page callback' => 'dfsiexport_Export',
+            'page callback' => 'drupal_get_form',
+            'page arguments' => array('dfsiexport_ExportForm'),            
             'file' => 'dfsiexport.export.inc',
             'access callback' => TRUE
     );
@@ -40,9 +41,6 @@ function dfsiexport_menu()
 	(
             'title' => t('Exportation'),
             'type' => MENU_DEFAULT_LOCAL_TASK,
-            //'page callback' => 'dfsiexport_Export',
-            'page callback' => 'drupal_get_form',
-            'page arguments' => array('dfsiexport_Export'),
             'access callback' => TRUE,
             'file' => 'dfsiexport.export.inc',
             'weight' => 1,  
