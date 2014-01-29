@@ -11,6 +11,10 @@ function dfsiexport_form_alter(&$form, &$form_state, $form_id)
 {
     if($form['#form_id']  == 'dfsiexport_ExportForm' ) //
     {
-        $form['dfsiexport_choixExport'][1]['#default_value'] = 1;
+        $choixExport = variable_get('dfsiexport_choixExport', array(1,2));
+        foreach($choixExport as $i )
+        {
+            $form['dfsiexport_choixExport'][$i]['#default_value'] = true;
+        }
     }
 }
