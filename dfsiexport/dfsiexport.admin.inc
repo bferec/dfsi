@@ -24,8 +24,8 @@ function dfsiexport_admin_settings()
 		'#title' => t("Mode d'exportation"),
 		'#options' => array
 		(
-			1 =>t('Csv'),
-			2 =>t('Xml'),
+			_DFSIEXPORT_MODE_EXPORT_CSV =>t('Csv'),
+			_DFSIEXPORT_MODE_EXPORT_XML =>t('Xml'),
 		),
 		'#default_value' => variable_get('modeExport','#options'),
 	);      

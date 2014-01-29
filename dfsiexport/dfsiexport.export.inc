@@ -8,6 +8,27 @@
 // ------------------------------------------------
 
 
+
+
+// ---------------------------------------
+// callback ajax 
+// appelé sur changement d'etat des cases
+// à cocher
+// export dependances implique export noeuds
+// ---------------------------------------
+function dfsiexport_Ajax_CheckBoxesOptionsCallback( $form, &$form_state ) 
+{
+    if( $form['dfsiexport_choixExport'][2]['#checked'] == true )
+    {
+        $form['dfsiexport_choixExport'][1]['#checked'] = true;
+    }
+    return $form['dfsiexport_choixExport'];
+}
+
+// ---------------------------------------
+// renvoie le tableau associatif des options
+// possibles d'éléments à exporter
+// ---------------------------------------
 function dfsiexport_ExportFormGetOptions()
 {
     return array
@@ -18,19 +39,9 @@ function dfsiexport_ExportFormGetOptions()
         );
 }
 
-// callback ajax 
-function ajax_options_callback( $form, &$form_state ) 
-{
-    
-    
-    // TODO ne fonctionne pas
-    if( $form['dfsiexport_choixExport'][2]['#checked'] == true )
-    {
-        $form['dfsiexport_choixExport'][1]['#checked'] = true;
-        $form['dfsiexport_choixExport'][1]['#default_value'] = true;
-    }
-}
-
+// ---------------------------------------
+// // formulaire exportation
+// ---------------------------------------
 function dfsiexport_ExportForm( $form, &$form_state ) 
 {
     $form['dfsiexport_choixExport'] = array
@@ -39,15 +50,18 @@ function dfsiexport_ExportForm( $form, &$form_state )
         '#title' => t("Eléments à exporter"),
         '#title_display'  => 'before',
         '#options' => dfsiexport_ExportFormGetOptions(),
-        '#ajax' => array(
-            'callback' => 'ajax_options_callback',
-            'wrapper' => 'options-form',
-            'event' => 'change',
-            'method' => 'replace',
-          ),        
+        '#ajax' => array
+        (
+            'callback' => 'dfsiexport_Ajax_CheckBoxesOptionsCallback',
+            'wrapper' => 'CheckBoxesOptions',       // nom de la div à reafficher en Ajax
+            'event' => 'change',                    // event declencheur
+            'method' => 'replace',                  // que faire de la div
+            //'effect' => 'slide',                  // effet visuel
+            'progress' => array('type' => 'none'),  // pas de barre de progression
+        ),        
         '#value' => array(),
         '#attributes' => array(),
-        '#prefix' => '<div id="options-form">',
+        '#prefix' => '<div id="CheckBoxesOptions">',
         '#suffix' => '</div>',        
     );	
        
@@ -60,21 +74,25 @@ function dfsiexport_ExportForm( $form, &$form_state )
     '#weight' => 255,
     '#submit' => array('dfsiexport_ExportForm_form_submit'),
    );    
-    
-   dpm($form_state);
    return  $form;
 }
 
+// ---------------------------------------
+// Génère le nom de fichier pour
+// l'exportation
+// ---------------------------------------
 function dfsiexport_CreateExportFileName()
 {
-    $result = date("Ymd-h-m-s")."-"."dfsi"."-export.text";
+    $result = date("Ymd-h-m-s")."-"."dfsi"."-export.txt";
     return $result;
 }
 
-
-function dfsiexport_ExportForm_form_submit($form, &$form_state) 
+// ---------------------------------------
+// sauvegarer les type de données à exporter
+// cochées
+// ---------------------------------------
+function dfsiexport_SaveExportOptions($form)
 {
-       
    $choix_export = array(); 
    // mise à jour des types d'export preferes
     
@@ -85,32 +103,97 @@ function dfsiexport_ExportForm_form_submit($form, &$form_state)
             $choix_export[] = $i;
         }
     }
-   variable_set('dfsiexport_choixExport', $choix_export );
+   variable_set('dfsiexport_choixExport', $choix_export ); 
    
-   $dfsi_ExportData = "test de fichier";
-   $dfsi_export_ModeExport = "csv";
-   $dfsi_fileName = dfsiexport_CreateExportFileName();
-   $dfsi_ExportDestination = "temporary://{$dfsi_fileName}";  
-   $filePath = file_unmanaged_save_data($dfsi_ExportData, $dfsi_ExportDestination, $replace = FILE_EXISTS_REPLACE);
+   return $choix_export;
+}
+
+// ---------------------------------------
+// lecture des données à exporter
+// ---------------------------------------
+function dfsiexport_GetDataToExport($DataChoiceToExport = array() )
+{
+    // TODO
+    $result = "Amael, tu dois ici lire les données\n";
+    
+    
+    return $result;
+}
+
+// ---------------------------------------
+// transformation des données brutes
+// en fonction du type d'exportation
+// ---------------------------------------
+function dfsiexport_GetStructuredDataToExport($ModeExport, $ExportData)
+{
+    $result = $ExportData;
+    
+    // TODO
+    $result .= "Amael à du travail ici ....\npour creer du CSV ou du Xml...";
+    switch($ModeExport )
+    {
+        case _DFSIEXPORT_MODE_EXPORT_CSV:
+            // construire csv
+        break;
+    
+        case _DFSIEXPORT_MODE_EXPORT_XML:
+            // construire Xml
+        break;
+    }
+    
+    return $result ;
+}
+// ---------------------------------------
+// traitement du submit export
+// ---------------------------------------
+function dfsiexport_ExportForm_form_submit($form, &$form_state) 
+{
+       
+   $dfsiexport_DataChoiceToExport = dfsiexport_SaveExportOptions($form);
+   
+   $dfsiexport_ExportData = dfsiexport_GetDataToExport($dfsiexport_DataChoiceToExport);     
+   
+   // TODO 
+   // au lieu d'utiliser une constante, 
+   // relire la variable Drupal mémorisée pour le choix de type 
+   // d'exportation, si celle ci à bien été sauvegardée dans
+   // l'écran d'administration de l'export. :-)
+   $dfsiexport_ModeExport = _DFSIEXPORT_MODE_EXPORT_CSV;
+   
+   // transformation de données brutes lues en données csv ou Xml
+   $dfsiexport_StructuredExportData = dfsiexport_GetStructuredDataToExport($dfsiexport_ModeExport, $dfsiexport_ExportData);
+   
+   // construction du nom et chemin de ficheir d'export
+   $dfsiexport_fileName = dfsiexport_CreateExportFileName();
+   $dfsexport_ExportDestination = "temporary://{$dfsiexport_fileName}";  
+   
+   // sauvegarde du fichier d'export
+   $filePath = file_unmanaged_save_data($dfsiexport_StructuredExportData, $dfsexport_ExportDestination, $replace = FILE_EXISTS_REPLACE);
+   
+   // download navigateur
+   // a tester sous IE qui bogue peut être...
     file_transfer
     (
          $filePath, array
          (
                'Content-Type' => 'text/csv',
-               'Content-Disposition' => 'attachment; fileName="'.$dfsi_fileName.'"'
+               'Content-Disposition' => 'attachment; fileName="'.$dfsiexport_fileName.'"'
          )      
     );
   
-    // rien ne sera exécuté ici car appel à drupal_exit();
-    //dpm(file_delete($filePath, $force = TRUE));
+    // rien ne sera exécuté ici car appel à drupal_exit(),  pas moyen d'effecer le fichier temporaire ici !!!!
 }
-
+// ---------------------------------------
+// validation du formulaire d'export
+// rien à faire dans l'immédiat...
+// ---------------------------------------
 function dfsiexport_ExportForm_form_validate($form, &$form_state) 
 {
     
 }
     
-
+// ---------------------------------------
+// ---------------------------------------
 function dfsiexport_Import()
 {
     $output = "";

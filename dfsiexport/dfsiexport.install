@@ -62,6 +62,6 @@ function dfsiexport_Delete_variables()
 // --------------------------------------------------
 function dfsiexport_Create_variables()
 {
-    variable_set('dfsiexport_Preferred_ExportMode', 1 );
+    variable_set('dfsiexport_Preferred_ExportMode', _DFSIEXPORT_MODE_EXPORT_CSV );
     variable_set('dfsiexport_choixExport', array());
 }
