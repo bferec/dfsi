@@ -63,5 +63,5 @@ function dfsiexport_Delete_variables()
 function dfsiexport_Create_variables()
 {
     variable_set('dfsiexport_Preferred_ExportMode', 1 );
-    variable_set('dfsiexport_choixExport', array(1,2));
+    variable_set('dfsiexport_choixExport', array());
 }

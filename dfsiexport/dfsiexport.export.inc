@@ -18,6 +18,19 @@ function dfsiexport_ExportFormGetOptions()
         );
 }
 
+// callback ajax 
+function ajax_options_callback( $form, &$form_state ) 
+{
+    
+    
+    // TODO ne fonctionne pas
+    if( $form['dfsiexport_choixExport'][2]['#checked'] == true )
+    {
+        $form['dfsiexport_choixExport'][1]['#checked'] = true;
+        $form['dfsiexport_choixExport'][1]['#default_value'] = true;
+    }
+}
+
 function dfsiexport_ExportForm( $form, &$form_state ) 
 {
     $form['dfsiexport_choixExport'] = array
@@ -26,16 +39,20 @@ function dfsiexport_ExportForm( $form, &$form_state )
         '#title' => t("Eléments à exporter"),
         '#title_display'  => 'before',
         '#options' => dfsiexport_ExportFormGetOptions(),
-        //'#default_value' => array(),
-                //array(1,3), //variable_get('dfsiexport_choixExport', array(1,2,3)),
+        '#ajax' => array(
+            'callback' => 'ajax_options_callback',
+            'wrapper' => 'options-form',
+            'event' => 'change',
+            'method' => 'replace',
+          ),        
         '#value' => array(),
-        '#attributes' => array()
+        '#attributes' => array(),
+        '#prefix' => '<div id="options-form">',
+        '#suffix' => '</div>',        
     );	
        
     $form['dfsiexport_choixExport'] = form_process_checkboxes($form['dfsiexport_choixExport']);
-        
-    
-    
+            
     $form['submit'] = array
     (
     '#type' => 'submit',
@@ -43,6 +60,8 @@ function dfsiexport_ExportForm( $form, &$form_state )
     '#weight' => 255,
     '#submit' => array('dfsiexport_ExportForm_form_submit'),
    );    
+    
+   dpm($form_state);
    return  $form;
 }
 
@@ -55,7 +74,18 @@ function dfsiexport_CreateExportFileName()
 
 function dfsiexport_ExportForm_form_submit($form, &$form_state) 
 {
+       
+   $choix_export = array(); 
+   // mise à jour des types d'export preferes
     
+    for ($i = 1; $i <= 3; $i++) 
+    {
+        if( $form['dfsiexport_choixExport'][$i]['#checked'] == true )
+        {
+            $choix_export[] = $i;
+        }
+    }
+   variable_set('dfsiexport_choixExport', $choix_export );
    
    $dfsi_ExportData = "test de fichier";
    $dfsi_export_ModeExport = "csv";
