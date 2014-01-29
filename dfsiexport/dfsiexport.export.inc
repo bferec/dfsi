@@ -48,7 +48,7 @@ function dfsiexport_ExportForm( $form, &$form_state )
 
 function dfsiexport_CreateExportFileName()
 {
-    $result = date("Ymd-h:m:s")."-"."dfsi"."-export.text";
+    $result = date("Ymd-h-m-s")."-"."dfsi"."-export.text";
     return $result;
 }
 
