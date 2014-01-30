@@ -108,14 +108,25 @@ function dfsiexport_SaveExportOptions($form)
    return $choix_export;
 }
 
+
 // ---------------------------------------
 // lecture des données à exporter
 // ---------------------------------------
 function dfsiexport_GetDataToExport($DataChoiceToExport = array() )
 {
-    // TODO
-    $result = "Amael, tu dois ici lire les données\n";
+    $result = array();
     
+    $query = new EntityFieldQuery();
+    $query-> entityCondition('entity_type', 'node')
+    ->entityCondition('bundle', array('itservice','itcontainer') )            
+    ->propertyCondition('status', 1);
+    
+    $result = $query->execute();
+    if (isset($result['node'])) 
+    {
+        $items_nids = array_keys($result['node']);
+        $result = entity_load('node', $items_nids);
+    }
     
     return $result;
 }
@@ -126,16 +137,42 @@ function dfsiexport_GetDataToExport($DataChoiceToExport = array() )
 // ---------------------------------------
 function dfsiexport_GetStructuredDataToExport($ModeExport, $ExportData)
 {
-    $result = $ExportData;
+    $result = "";
     
-    // TODO
-    $result .= "Amael à du travail ici ....\npour creer du CSV ou du Xml...";
-    switch($ModeExport )
+    $itServiceFields = field_info_instances('node',_DFSI_SERVICE);
+    $itContainerFields = field_info_instances('node',_DFSI_CONTAINER);
+   
+    
+    
+    foreach ( $itServiceFields as $key => $itServiceField ) 
     {
+        //dpm( );
+    }
+    // TODO    
+    switch( $ModeExport )
+    {
+        // construire csv
         case _DFSIEXPORT_MODE_EXPORT_CSV:
-            // construire csv
+            foreach($ExportData as $key =>  $oneNode )
+            {
+                //dpm($oneNode);
+                
+                $result .=  "{$key};";
+                if( $oneNode-> type == _DFSI_SERVICE)
+                {
+                    foreach( $itServiceFields as $key => $itServiceField )
+                    {
+                        $fieldName = $itServiceField['field_name'];
+                        $wrapper = entity_metadata_wrapper('node', $oneNode);
+                        dpm($wrapper->$fieldName->value());
+                        //$result .=  "{$wrapper-> $fieldName->value()},";
+                    }
+                    $result .="\r\n";
+                }                
+            }
+
         break;
-    
+
         case _DFSIEXPORT_MODE_EXPORT_XML:
             // construire Xml
         break;
