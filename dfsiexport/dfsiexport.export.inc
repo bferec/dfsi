@@ -73,7 +73,8 @@ function dfsiexport_ExportForm( $form, &$form_state )
     '#value' => t('Exporter'),
     '#weight' => 255,
     '#submit' => array('dfsiexport_ExportForm_form_submit'),
-   );    
+    );  
+    
    return  $form;
 }
 
@@ -162,10 +163,28 @@ function dfsiexport_GetStructuredDataToExport($ModeExport, $ExportData)
                 {
                     foreach( $itServiceFields as $key => $itServiceField )
                     {
+                        
                         $fieldName = $itServiceField['field_name'];
                         $wrapper = entity_metadata_wrapper('node', $oneNode);
-                        dpm($wrapper->$fieldName->value());
-                        //$result .=  "{$wrapper-> $fieldName->value()},";
+                        $fieldValue = $wrapper->$fieldName->value();
+                        
+                        if(  gettype ($fieldValue) == 'object')
+                        {
+                            dpm($itServiceField);
+                        }
+                        else if(  gettype ($fieldValue) == 'array')
+                        {
+                            dpm($itServiceField);
+                        }
+                        else if( $fieldValue == NULL )
+                        {
+                            
+                        }
+                        else 
+                        {
+                           $result .=  '"'.$fieldValue.'"'.',';
+                        }
+                        
                     }
                     $result .="\r\n";
                 }                
@@ -180,6 +199,8 @@ function dfsiexport_GetStructuredDataToExport($ModeExport, $ExportData)
     
     return $result ;
 }
+
+
 // ---------------------------------------
 // traitement du submit export
 // ---------------------------------------
@@ -189,26 +210,24 @@ function dfsiexport_ExportForm_form_submit($form, &$form_state)
    $dfsiexport_DataChoiceToExport = dfsiexport_SaveExportOptions($form);
    
    $dfsiexport_ExportData = dfsiexport_GetDataToExport($dfsiexport_DataChoiceToExport);     
-   
-   // TODO 
-   // au lieu d'utiliser une constante, 
-   // relire la variable Drupal mémorisée pour le choix de type 
-   // d'exportation, si celle ci à bien été sauvegardée dans
-   // l'écran d'administration de l'export. :-)
-   $dfsiexport_ModeExport = _DFSIEXPORT_MODE_EXPORT_CSV;
+
+   // recuperation du mode exportation
+   $dfsiexport_ModeExport = variable_get('dfsiexport_Preferred_ExportMode', _DFSIEXPORT_MODE_EXPORT_CSV );
    
    // transformation de données brutes lues en données csv ou Xml
    $dfsiexport_StructuredExportData = dfsiexport_GetStructuredDataToExport($dfsiexport_ModeExport, $dfsiexport_ExportData);
    
    // construction du nom et chemin de ficheir d'export
    $dfsiexport_fileName = dfsiexport_CreateExportFileName();
-   $dfsexport_ExportDestination = "temporary://{$dfsiexport_fileName}";  
+   
+    $dfsexport_ExportDestination = "temporary://{$dfsiexport_fileName}";  
    
    // sauvegarde du fichier d'export
    $filePath = file_unmanaged_save_data($dfsiexport_StructuredExportData, $dfsexport_ExportDestination, $replace = FILE_EXISTS_REPLACE);
    
    // download navigateur
-   // a tester sous IE qui bogue peut être...
+   // a tester sous IE qui bogue peut être...   
+
     file_transfer
     (
          $filePath, array
@@ -217,7 +236,6 @@ function dfsiexport_ExportForm_form_submit($form, &$form_state)
                'Content-Disposition' => 'attachment; fileName="'.$dfsiexport_fileName.'"'
          )      
     );
-  
     // rien ne sera exécuté ici car appel à drupal_exit(),  pas moyen d'effecer le fichier temporaire ici !!!!
 }
 // ---------------------------------------
