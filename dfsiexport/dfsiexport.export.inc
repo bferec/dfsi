@@ -132,6 +132,67 @@ function dfsiexport_GetDataToExport($DataChoiceToExport = array() )
     return $result;
 }
 
+
+// ---------------------------------------
+// retourne les données d'un champ pour
+// l'export CSV.
+// ---------------------------------------
+function dfsiexport_GetExportText( $fieldName , $node )
+{
+    $result = '';
+    
+    $wrapper = entity_metadata_wrapper('node', $node);  
+    $fieldValue = $wrapper -> $fieldName -> value();
+
+    // -----------------------------
+    // La valeur est de type tableau
+    // -----------------------------
+    if(  gettype ($fieldValue) == 'array' ) 
+    {
+        // cas du champ body
+        if( isset($fieldValue['value']) )
+        {
+            $result .=  '"'. $fieldValue['value'].'",';
+        }
+        // -------------------------------------
+        // c'est un champ de type node reference
+        // -------------------------------------
+        else
+        {
+            $refList = '"';
+            foreach($fieldValue as $oneReference )
+            {
+              $refList .=   $oneReference->nid;
+              $refList .=  ',';
+            }
+            $refList = rtrim( $refList, "," );  // retrait virgule finale;
+            $refList .= '"';
+
+            $result .= $refList.',';
+        }    
+    }
+    // -------------------------------------------------
+    // La valeur est un objet (champ terme de taxonomie)
+    // -------------------------------------------------
+    else if( gettype ($fieldValue) == 'object' )
+    {
+        //dpm($fieldValue);
+        if( isset($fieldValue->tid) )
+        {
+            $taxonomyRef = '"'.$fieldValue->vid.':'.$fieldValue->tid.'"';
+            $result .= $taxonomyRef.',';
+        }
+    }
+    // ------------------------------------------
+    // La valeur est un scalaire, exemple : title
+    // ------------------------------------------
+    else 
+    {
+       $result .=  '"'.$fieldValue.'"'.',';
+    }    
+    return $result;
+}
+
 // ---------------------------------------
 // transformation des données brutes
 // en fonction du type d'exportation
@@ -140,54 +201,34 @@ function dfsiexport_GetStructuredDataToExport($ModeExport, $ExportData)
 {
     $result = "";
     
-    $itServiceFields = field_info_instances('node',_DFSI_SERVICE);
-    $itContainerFields = field_info_instances('node',_DFSI_CONTAINER);
-   
-    
-    
-    foreach ( $itServiceFields as $key => $itServiceField ) 
-    {
-        //dpm( );
-    }
-    // TODO    
+  
     switch( $ModeExport )
     {
         // construire csv
         case _DFSIEXPORT_MODE_EXPORT_CSV:
             foreach($ExportData as $key =>  $oneNode )
             {
-                //dpm($oneNode);
+                // NID
+                $result .=  "{$key},";
+                // type de noeud
+                $result .=  '"'. dfsi_GetTypeOf($oneNode).'",';
+                // titre
+                $result .=  '"'. dfsi_GetTitleOf($oneNode).'",';
                 
-                $result .=  "{$key};";
-                if( $oneNode-> type == _DFSI_SERVICE)
+                // recuperation du nom des champs
+                $fields = field_info_instances('node', dfsi_GetTypeOf($oneNode) );
+                // --------------------
+                // pour tous les champs
+                // --------------------
+                foreach( $fields as $key => $field )
                 {
-                    foreach( $itServiceFields as $key => $itServiceField )
-                    {
-                        
-                        $fieldName = $itServiceField['field_name'];
-                        $wrapper = entity_metadata_wrapper('node', $oneNode);
-                        $fieldValue = $wrapper->$fieldName->value();
-                        
-                        if(  gettype ($fieldValue) == 'object')
-                        {
-                            dpm($itServiceField);
-                        }
-                        else if(  gettype ($fieldValue) == 'array')
-                        {
-                            dpm($itServiceField);
-                        }
-                        else if( $fieldValue == NULL )
-                        {
-                            
-                        }
-                        else 
-                        {
-                           $result .=  '"'.$fieldValue.'"'.',';
-                        }
-                        
-                    }
-                    $result .="\r\n";
-                }                
+                    // recuperation de la valeur du champ pour ce noeud
+                    $fieldName = $field['field_name'];
+                    $result .= dfsiexport_GetExportText( $fieldName , $oneNode );
+                }
+                
+                $result = rtrim($result, ",");// retrait virgule finale;
+                $result .="\r\n";
             }
 
         break;
