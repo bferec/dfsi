@@ -11,7 +11,7 @@ if( !defined("_DFSI_INCLUDE_EXTENSION") ) { define( "_DFSI_INCLUDE_EXTENSION" , 
 
 
 module_load_include( _DFSI_INCLUDE_EXTENSION , _DFSI_MODULE_NAME , "dfsi.define");
-
+module_load_include( _DFSI_INCLUDE_EXTENSION , _DFSI_MODULE_NAME , "dfsi.api");
 
 // --------------------------------
 // creation du format de date fr
@@ -211,6 +211,8 @@ function dfsi_uninstall()
 	dfsi_Delete_ContentType($typeName);
 
 
+        dfsi_DeleteDetailsDatas();
+        
 	// --------------------------
 	// Suppression des Taxonomies
 	// --------------------------
@@ -343,6 +345,20 @@ function dfsi_Delete_Fields_Instances($typeName)
 	}
 }
 
+
+// -----------------------------------------------
+// purge des donnés de détail
+// -----------------------------------------------
+function dfsi_DeleteDetailsDatas()
+{
+    $typeNames = dfsi_FindAllDetailContentTypeNames();
+    foreach($typeNames as $typeName)
+    {
+        dfsi_Delete_Fields_Instances($typeName);
+        dfsi_Delete_ContentType($typeName);
+        
+    }
+}
 
 // -----------------------------------------------
 // Hook_schema 

@@ -656,3 +656,27 @@ function FindDetailContentTypeNames( $node )
    $result = $detail_terme_names;  
    return $result;
 }
+
+// recherche de tous les noms des types 
+// de contenu de detail créés
+function dfsi_FindAllDetailContentTypeNames()
+{
+    $result = array();
+
+   //recherche des contenus de detail existants
+    $sqlRequest = db_select(_DFSI_DETAIL_TABLE, 'dt' )
+    ->fields
+         ( 
+                 'dt', 
+                 array
+                 ( 
+                     'type'
+                 ) 
+         )
+    -> execute();
+   while( $typeName = $sqlRequest-> fetchAssoc() )
+   {
+           $result[] = $typeName['type'];
+   }     
+   return $result;
+}
