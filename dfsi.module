@@ -431,5 +431,19 @@ function dfsi_popup_forms_data()
             'file' => drupal_get_path('module', _DFSI_MODULE_NAME)  . '/dfsi.details.inc',
             'autopage' => TRUE,
         ),
+        'dfsi_DetailContentAddForm' => array
+        (
+            'title' => t("Données de détail"),
+            'access callback' => TRUE,
+            'form arguments' => array
+            (
+                'nid'=> 'nid',
+                'vid'=> 'vid',
+                'tid'=> 'tid',
+            ),
+            'close_buttons' => array('op'),
+            'file' => drupal_get_path('module', _DFSI_MODULE_NAME)  . '/dfsi.details.inc',
+            'autopage' => TRUE,            
+        ),
     );
 }

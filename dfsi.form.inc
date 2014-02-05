@@ -247,16 +247,16 @@ function dfsi_ExistDetailContent($nid,$vid,$tid)
    //recherche des contenus de detail existants
    $sqlRequest = db_select(_DFSI_NODE_DETAIL_TABLE, 'ndt' )
     ->fields
-         ( 
-                 'ndt', 
-                 array
-                 ( 
-                     'nid',
-                     'did',
-                     'vid',
-                     'tid',
-                 ) 
-         )
+    ( 
+       'ndt', 
+       array
+       ( 
+           'nid',
+           'did',
+           'vid',
+           'tid',
+       ) 
+    )
     -> condition( 'nid',$nid , "=" )
     -> condition( 'vid',$vid , "=" )
     -> condition( 'tid',$tid , "=" )           
@@ -325,25 +325,38 @@ function dfsi_AlterEditForm( &$form )
         // si utilisation de données complémentaires ?
         if( dfsi_ComplementaryDataEnabled() )
         {
+            
             dfsi_BuildChunkEditDataSection( $form , $contentTypeNames);
         }
        
     }  
 }
 
-// -----------------------------
-// // ajout des sous formulaires
-// -----------------------------
+
+
+// ----------------------------------------------
+// // ajout des contenus de sous sections details
+// ----------------------------------------------
 function dfsi_BuildChunkEditDataSection(&$form, $contentTypeNames)
 {    
-     
+    
     $node =  $form['#node'];
     // Ajout des sous formulaires de detail                   
     foreach ($contentTypeNames as $key => $contentTypeName)
     {    
         $form['DetailDataSection'][$key]['links'] = array();
         
-        $detailNode = dfsi_ExistDetailContent(dfsi_GetNidOf($node),$contentTypeName['vid'],$contentTypeName['tid'] );
+        $nid = dfsi_GetNidOf($node);
+        $vid = $contentTypeName['vid'];
+        $tid =  $contentTypeName['tid'];
+        // --------------------------------------------------------
+        // recherche d'existence de données complémentaires saisies
+        // pour ce noeud et ce terme
+        // --------------------------------------------------------
+        $detailNode = dfsi_ExistDetailContent($nid,$vid,$tid);
+        // ---------------------------------------
+        // des données existe proposer de modifier
+        // ---------------------------------------
         if( $detailNode != null )
         {       
             $form['DetailDataSection'][$key]['links'][]= array
@@ -351,7 +364,7 @@ function dfsi_BuildChunkEditDataSection(&$form, $contentTypeNames)
                 '#type' => 'link',
                 '#title'=> t('Modifier '.$key),
                 '#href'=> "",
-                '#description' => t(""),                 
+                '#description' => t(""),     
             );             
             /*
             node_object_prepare($detailNode);
@@ -364,15 +377,41 @@ function dfsi_BuildChunkEditDataSection(&$form, $contentTypeNames)
             $form['DetailDataSection'][$key]['formulaire'] = $subform;           
             */     
         }
+        // ---------------------------------
+        // aucune données Proposer d'ajouter
+        // ---------------------------------
         else
         {
+     
+            $PopupArgs = json_encode
+            (
+                array
+                (
+                    'nid'=> $nid,
+                    'vid'=> $vid,
+                    'tid'=> $tid,            
+                )
+            );
+            // simple quote au lieu de double
+            $PopupArgs = str_replace ( '"' , "'" ,$PopupArgs );
+            
+            popup_forms_parent_js();
+            // appel javascript la fonction du module  popup_forms
+            $url = "javascript:popupFormsFormShow('dfsi_DetailContentAddForm',null,{$PopupArgs});";               
             $label = $contentTypeName['label'];
+            $options = array('html' => TRUE);
+            $addLink = l( t('Ajouter un détail pour ').$key , $url , $options );
             $form['DetailDataSection'][$key]['links'][]= array
             (
                 '#type' => 'link',
-                '#title'=> t('Ajouter un détail pour '.$key),
-                '#href'=> "http://www.google.fr",
-                '#description' => t("création d'un élément de détail"),                 
+                '#title'=> t('Ajouter un détail pour ').$key,
+                '#href'=> '',
+                '#description' => t(""),   
+                '#attributes' => array
+                (
+                   'fragment' => ' ', 'external' => TRUE,
+                   'onclick' => $url
+                )
             ); 
         }
     }    

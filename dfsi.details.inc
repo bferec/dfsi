@@ -59,7 +59,7 @@ function dfsi_DetailsDatasTypePage($args)
     }
     else
     {
-        $link = l($type,"admin/structure/types/manage/".$type);
+        $link = l($type,"admin/structure/types/manage/{$type}");
         $output .= t("Type de contenu de données complémentaires existant pour ce terme : ").$link;
         
         $fields = field_info_instances("node",$type);
@@ -86,7 +86,8 @@ function dfsi_DetailsDatasTypePage($args)
 }
 
 // -------------------------------------------------
-// formulaire d'ajout d'un type de contenu detail
+// formulaire de confirmation d'ajout 
+// d'un type de contenu detail
 // affiché en modal
 // -------------------------------------------------
 function dfsi_DetailContentTypeAddForm($form, &$form_state, $vid , $tid , $taxonomyTermName ) 
@@ -154,7 +155,7 @@ function dfsi_DetailContentTypeAddForm_submit($form, &$form_state)
 function dfsi_EditDetailComplementType($args)
 {
    $newContentTypeName = $args->vid .$args->tid ."_detail";
-   drupal_goto("admin/structure/types/manage/".$newContentTypeName);    
+   drupal_goto("admin/structure/types/manage/{$newContentTypeName}");    
 }
 // -------------------------------
 // suppression du type de contenu 
@@ -338,4 +339,10 @@ function dfsi_BuildChunkViewDataSection( $node )
     $html .= '</fieldset>';    
                 
      return $html;           
+}
+
+
+function dfsi_DetailContentAddForm($form, &$form_state, $nid, $vid , $tid ) 
+{
+    return $form;    
 }
