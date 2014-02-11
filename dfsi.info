@@ -28,4 +28,5 @@ files[] = dfsi.service.fields.inc
 files[] = dfsi.statut.inc
 files[] = dfsi.testData.inc
 files[] = dfsi.views.inc
+files[] = dfsi.cron.inc
 
