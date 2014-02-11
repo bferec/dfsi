@@ -142,7 +142,6 @@ function dfsi_RemoveAncestorsFromGroupDependanciesChoice(&$form)
         }
     }    
 }
-
 // -------------------------------------------
 // Retrait des membres d'un meme groupe 
 // de dépendance
@@ -332,7 +331,21 @@ function dfsi_AlterEditForm( &$form )
     }  
 }
 
-
+function dfsi_AddDetail_Ajax_CallBack( $form, &$form_state ) 
+{       
+            
+    $popupArgs = $form['popupArgs'];
+    popup_forms_parent_js();
+            
+    $js = "
+            (function($) {
+            $(document).ready(function() {
+            popupFormsFormShow('dfsi_DetailContentTypeAddForm',null,{$PopupArgs});
+            });
+            })(jQuery);
+        ";
+        drupal_add_js($js, 'inline');
+}
 
 // ----------------------------------------------
 // // ajout des contenus de sous sections details
@@ -354,8 +367,9 @@ function dfsi_BuildChunkEditDataSection(&$form, $contentTypeNames)
         // pour ce noeud et ce terme
         // --------------------------------------------------------
         $detailNode = dfsi_ExistDetailContent($nid,$vid,$tid);
+        
         // ---------------------------------------
-        // des données existe proposer de modifier
+        // MODIFIER données de detail
         // ---------------------------------------
         if( $detailNode != null )
         {       
@@ -378,44 +392,52 @@ function dfsi_BuildChunkEditDataSection(&$form, $contentTypeNames)
             */     
         }
         // ---------------------------------
-        // aucune données Proposer d'ajouter
+        // AJOUTER
+        // aucune données de detail existante
         // ---------------------------------
         else
         {
-     
-            $PopupArgs = json_encode
-            (
-                array
-                (
-                    'nid'=> $nid,
-                    'vid'=> $vid,
-                    'tid'=> $tid,            
-                )
-            );
-            // simple quote au lieu de double
-            $PopupArgs = str_replace ( '"' , "'" ,$PopupArgs );
-            
-            popup_forms_parent_js();
             // appel javascript la fonction du module  popup_forms
-            $url = "javascript:popupFormsFormShow('dfsi_DetailContentAddForm',null,{$PopupArgs});";               
-            $label = $contentTypeName['label'];
-            $options = array('html' => TRUE);
-            $addLink = l( t('Ajouter un détail pour ').$key , $url , $options );
+            // $url = "javascript:popupFormsFormShow('dfsi_DetailContentAddForm',null,{$PopupArgs});";               
+            // $label = $contentTypeName['label'];
+            // $options = array('html' => TRUE);
+            // $addLink = l( t('Ajouter un détail pour ').$key , $url , $options );
+            
+            $PopupArgs = json_encode
+             (
+                 array
+                 (
+                     'nid'=> $nid,
+                     'vid'=> $vid,
+                     'tid'=> $tid,            
+                 )
+             );
+             // simple quote au lieu de double
+            $PopupArgs = str_replace ( '"' , "'" ,$PopupArgs );
+            $form['popupArgs'] = array('#type' => 'hidden', '#value' => $PopupArgs);
+            
             $form['DetailDataSection'][$key]['links'][]= array
             (
-                '#type' => 'link',
-                '#title'=> t('Ajouter un détail pour ').$key,
-                '#href'=> '',
+                '#type' => 'button',
+                '#value' => t('Ajouter un détail pour ').$key,
                 '#description' => t(""),   
-                '#attributes' => array
+                '#ajax'  => array
                 (
-                   'fragment' => ' ', 'external' => TRUE,
-                   'onclick' => $url
-                )
+                    'callback' => 'dfsi_AddDetail_Ajax_CallBack',
+                    //'parameters'=>array( 'popupargs'=> $PopupArgs ),
+                    'wrapper'  => 'AddDetail',
+                    'method'   => 'replace',
+                    //'effect' => 'slide',                  // effet visuel : aucun
+                    'progress' => array('type' => 'none'),  // pas de barre de progression
+                ),   
+                '#prefix' => '<div id="AddDetail">',
+                '#suffix' => '</div>',                  
             ); 
         }
     }    
 }
+
+
 // -----------------------
 // validation champ statut
 // -----------------------

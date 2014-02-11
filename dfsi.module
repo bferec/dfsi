@@ -432,6 +432,7 @@ function dfsi_popup_forms_data()
             'file' => drupal_get_path('module', _DFSI_MODULE_NAME)  . '/dfsi.details.inc',
             'autopage' => TRUE,
         ),
+        
         'dfsi_DetailContentAddForm' => array
         (
             'title' => t("Données de détail"),
