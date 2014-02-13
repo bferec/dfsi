@@ -11,6 +11,7 @@ if( !defined("_DFSI_INCLUDE_EXTENSION") ) { define( "_DFSI_INCLUDE_EXTENSION" , 
 module_load_include( _DFSI_INCLUDE_EXTENSION , _DFSI_MODULE_NAME , "dfsi.define");
 module_load_include( _DFSI_INCLUDE_EXTENSION , _DFSI_MODULE_NAME , "dfsi.api");
 
+module_load_include(_DFSI_INCLUDE_EXTENSION, 'node', 'node.pages');
 // -------------------------------------------------
 // page d'association d'un type de contenu
 // pour les données supplémentaires liées
@@ -85,6 +86,57 @@ function dfsi_DetailsDatasTypePage($args)
     return $output;
 }
 
+
+// -------------------------------------------------
+// formulaire de saisie de données de détail
+// -------------------------------------------------
+function dfsi_DetailContentAddForm($form, &$form_state, $nid,$vid,$tid ) 
+{   
+    $node_type = '2193251-detail';
+    // '2193251-detail';
+    $form_id = '2193251_detail_node_form';
+
+    // noeud vide
+
+
+    $dfsi_DetailNode = new stdClass();
+    $dfsi_DetailNode->type = $node_type;
+    //$dfsi_DetailNode->language = LANGUAGE_NONE;
+    node_object_prepare($dfsi_DetailNode);
+    
+    $form = drupal_get_form($form_id,$dfsi_DetailNode );
+    
+    return $form;
+    /*
+ $form['actions'] = array('#type' => 'actions');
+    $form['actions']['submit'] = array
+    (
+        '#type' => 'submit',
+        '#value' => t('Enregistrer'),
+        '#suffix' => "&nbsp;"
+    );    
+    $form['actions']['cancel'] = array
+    (
+      '#type' => 'submit',
+      '#value' => t('Annuler'),
+    );    
+    $form['#submit'][] = 'dfsi_DetailContentAddForm_submit';    
+    return $form;    
+     */
+}
+
+// ------------------------------------------
+// callback function pour dfsi_DetailContentAddForm()
+// ------------------------------------------
+function dfsi_DetailContentAddForm_submit($form, &$form_state) 
+{ 
+    // confirmation de creation du  type de contenu de detail
+     if($form_state['values']['op'] == t('Enregistrer') )
+     {
+     }
+}
+
+
 // -------------------------------------------------
 // formulaire de confirmation d'ajout 
 // d'un type de contenu detail
@@ -134,7 +186,7 @@ function dfsi_DetailContentTypeAddForm($form, &$form_state, $vid , $tid , $taxon
 }
 
 // ------------------------------------------
-// callback function pour fsi_DetailAddForm()
+// callback function pour dfsi_DetailContentTypeAddForm()
 // ------------------------------------------
 function dfsi_DetailContentTypeAddForm_submit($form, &$form_state) 
 { 
@@ -342,7 +394,3 @@ function dfsi_BuildChunkViewDataSection( $node )
 }
 
 
-function dfsi_DetailContentAddForm($form, &$form_state, $nid, $vid , $tid ) 
-{
-    return $form;    
-}

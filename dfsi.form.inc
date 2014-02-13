@@ -331,22 +331,6 @@ function dfsi_AlterEditForm( &$form )
     }  
 }
 
-function dfsi_AddDetail_Ajax_CallBack( $form, &$form_state ) 
-{       
-            
-    $popupArgs = $form['popupArgs'];
-    popup_forms_parent_js();
-            
-    $js = "
-            (function($) {
-            $(document).ready(function() {
-            popupFormsFormShow('dfsi_DetailContentTypeAddForm',null,{$PopupArgs});
-            });
-            })(jQuery);
-        ";
-        drupal_add_js($js, 'inline');
-}
-
 // ----------------------------------------------
 // // ajout des contenus de sous sections details
 // ----------------------------------------------
@@ -397,12 +381,8 @@ function dfsi_BuildChunkEditDataSection(&$form, $contentTypeNames)
         // ---------------------------------
         else
         {
-            // appel javascript la fonction du module  popup_forms
-            // $url = "javascript:popupFormsFormShow('dfsi_DetailContentAddForm',null,{$PopupArgs});";               
-            // $label = $contentTypeName['label'];
-            // $options = array('html' => TRUE);
-            // $addLink = l( t('Ajouter un détail pour ').$key , $url , $options );
             
+            popup_forms_parent_js();
             $PopupArgs = json_encode
              (
                  array
@@ -414,30 +394,29 @@ function dfsi_BuildChunkEditDataSection(&$form, $contentTypeNames)
              );
              // simple quote au lieu de double
             $PopupArgs = str_replace ( '"' , "'" ,$PopupArgs );
+            
+            $url = "javascript:popupFormsFormShow('dfsi_DetailContentAddForm',null,{$PopupArgs});";   
+            
             $form['popupArgs'] = array('#type' => 'hidden', '#value' => $PopupArgs);
+
+            $link = '<a href="';
+            $link .=  $url;
+            $link .=  '">'.t("Ajouter un détail").'</a>';
             
             $form['DetailDataSection'][$key]['links'][]= array
             (
-                '#type' => 'button',
-                '#value' => t('Ajouter un détail pour ').$key,
-                '#description' => t(""),   
-                '#ajax'  => array
-                (
-                    'callback' => 'dfsi_AddDetail_Ajax_CallBack',
-                    //'parameters'=>array( 'popupargs'=> $PopupArgs ),
-                    'wrapper'  => 'AddDetail',
-                    'method'   => 'replace',
-                    //'effect' => 'slide',                  // effet visuel : aucun
-                    'progress' => array('type' => 'none'),  // pas de barre de progression
-                ),   
-                '#prefix' => '<div id="AddDetail">',
-                '#suffix' => '</div>',                  
+                '#markup' => $link,
             ); 
         }
     }    
 }
 
+function dfsi_PopupAddDetailLink($element) 
+{
+    dpm($element);
+  return $element;
 
+}
 // -----------------------
 // validation champ statut
 // -----------------------
